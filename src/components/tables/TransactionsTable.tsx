@@ -92,7 +92,7 @@ function EmptyState() {
   );
 }
 
-function PaginationControls({ 
+export function PaginationControls({ 
   currentPage, 
   totalPages, 
   onPageChange, 
@@ -204,7 +204,7 @@ export default function TransactionsTable({
   // If hideHeader is true, render only the table content without wrapper
   if (hideHeader) {
     return (
-      <>
+      <motion.tbody>
         <AnimatePresence mode="wait">
           {loading ? (
             <motion.tbody
@@ -288,14 +288,7 @@ export default function TransactionsTable({
             </motion.tbody>
           )}
         </AnimatePresence>
-        
-        <PaginationControls
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={onPageChange}
-          loading={loading}
-        />
-      </>
+      </motion.tbody>
     );
   }
 

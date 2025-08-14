@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import TransactionsTable from '../components/tables/TransactionsTable';
+import TransactionsTable, { PaginationControls } from '../components/tables/TransactionsTable';
 import { MagnifyingGlassIcon, FunnelIcon, CalendarDaysIcon } from '@heroicons/react/24/outline';
 
 // Extended mock data for better pagination demonstration
@@ -434,6 +434,13 @@ export default function Transactions() {
             />
           </table>
         </div>
+        
+        <PaginationControls
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+          loading={isLoading}
+        />
       </motion.div>
     </div>
   );
