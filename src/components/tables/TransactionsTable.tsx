@@ -388,7 +388,7 @@ export default function TransactionsTable({
                           />
                         </div>
                       </td>
-                    </tr>
+                    </motion.tr>
                   );
                 })}
               </motion.tbody>
