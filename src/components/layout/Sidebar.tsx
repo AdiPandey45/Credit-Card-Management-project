@@ -25,16 +25,16 @@ const navigation = [
 interface SidebarProps {
   collapsed: boolean;
   onToggle: () => void;
+  isLargeScreen: boolean;
 }
 
-export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
+export default function Sidebar({ collapsed, onToggle, isLargeScreen }: SidebarProps) {
   const location = useLocation();
 
-  // On small/medium screens, collapsed means hidden
-  // On large screens, collapsed means icons-only
-  const isLargeScreen = typeof window !== 'undefined' && window.innerWidth >= 1024;
-  const showIconsOnly = isLargeScreen && collapsed;
+  // Determine sidebar behavior based on screen size
+  const isIconsOnly = isLargeScreen && collapsed;
   const isHidden = !isLargeScreen && collapsed;
+  const sidebarWidth = isIconsOnly ? 64 : 256;
 
   return (
     <>
@@ -57,50 +57,49 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
         {!isHidden && (
           <motion.div
             initial={{ 
-              x: isLargeScreen ? (showIconsOnly ? -192 : -256) : -256,
-              width: showIconsOnly ? 64 : 256
+              x: isLargeScreen ? 0 : -sidebarWidth,
+              width: sidebarWidth
             }}
             animate={{ 
               x: 0,
-              width: showIconsOnly ? 64 : 256
+              width: sidebarWidth
             }}
             exit={{ 
-              x: isLargeScreen ? (showIconsOnly ? -192 : -256) : -256
+              x: isLargeScreen ? 0 : -sidebarWidth
             }}
             transition={{ duration: 0.3, ease: 'easeInOut' }}
             className={clsx(
               'fixed top-0 left-0 z-50 h-full bg-white dark:bg-neutral-900 border-r border-neutral-200 dark:border-neutral-700 shadow-xl',
-              showIconsOnly ? 'w-16' : 'w-64'
+              isLargeScreen ? 'lg:relative lg:z-30' : ''
             )}
+            style={{ width: sidebarWidth }}
           >
             <div className="flex h-full flex-col">
               {/* Logo */}
               <div className={clsx(
                 'flex h-16 items-center border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800',
-                showIconsOnly ? 'justify-center px-2' : 'justify-between px-4'
+                isIconsOnly ? 'justify-center px-2' : 'justify-between px-4'
               )}>
-                {showIconsOnly ? (
+                {isIconsOnly ? (
                   <div className="flex h-8 w-8 items-center justify-center rounded bg-primary-600">
                     <CreditCardIcon className="h-5 w-5 text-white" />
                   </div>
                 ) : (
-                  <>
-                    <div className="flex items-center space-x-2">
-                      <div className="flex h-8 w-8 items-center justify-center rounded bg-primary-600">
-                        <CreditCardIcon className="h-5 w-5 text-white" />
-                      </div>
-                      <span className="text-lg font-semibold text-neutral-900 dark:text-white">
-                        CreditFlow
-                      </span>
+                  <div className="flex items-center space-x-2">
+                    <div className="flex h-8 w-8 items-center justify-center rounded bg-primary-600">
+                      <CreditCardIcon className="h-5 w-5 text-white" />
                     </div>
-                  </>
+                    <span className="text-lg font-semibold text-neutral-900 dark:text-white">
+                      CreditFlow
+                    </span>
+                  </div>
                 )}
               </div>
 
               {/* Navigation */}
               <nav className={clsx(
                 'flex-1 space-y-1',
-                showIconsOnly ? 'p-2' : 'p-3'
+                isIconsOnly ? 'p-2' : 'p-3'
               )}>
                 {navigation.map((item) => {
                   const isActive = location.pathname === item.href;
@@ -116,7 +115,7 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
                         }}
                         className={clsx(
                           'group flex items-center rounded-md text-sm font-medium transition-all duration-150 relative',
-                          showIconsOnly ? 'p-2 justify-center' : 'px-3 py-2',
+                          isIconsOnly ? 'p-2 justify-center' : 'px-3 py-2',
                           isActive
                             ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-300'
                             : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800'
@@ -125,22 +124,22 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
                         <item.icon
                           className={clsx(
                             'h-5 w-5 flex-shrink-0 transition-colors',
-                            showIconsOnly ? '' : 'mr-3',
+                            isIconsOnly ? '' : 'mr-3',
                             isActive
                               ? 'text-primary-600 dark:text-primary-400'
                               : 'text-neutral-500 dark:text-neutral-400 group-hover:text-neutral-700 dark:group-hover:text-neutral-300'
                           )}
                         />
-                        {!showIconsOnly && <span>{item.name}</span>}
+                        {!isIconsOnly && <span>{item.name}</span>}
                         
                         {/* Active indicator for collapsed mode */}
-                        {showIconsOnly && isActive && (
+                        {isIconsOnly && isActive && (
                           <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-primary-600 rounded-l" />
                         )}
                       </NavLink>
                       
                       {/* Tooltip for collapsed mode */}
-                      {showIconsOnly && (
+                      {isIconsOnly && (
                         <div className="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2 py-1 bg-gray-900 dark:bg-gray-700 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50">
                           {item.name}
                           <div className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-gray-900 dark:border-r-gray-700" />
@@ -152,7 +151,7 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
               </nav>
               
               {/* Footer */}
-              {!showIconsOnly && (
+              {!isIconsOnly && (
                 <div className="p-3 border-t border-neutral-200 dark:border-neutral-700">
                   <div className="text-xs text-neutral-500 dark:text-neutral-400 text-center">
                     © 2024 CreditFlow

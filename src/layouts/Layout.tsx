@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Sidebar from '../components/layout/Sidebar';
 import TopNav from '../components/layout/TopNav';
@@ -12,19 +12,41 @@ interface LayoutProps {
 export default function Layout({ children }: LayoutProps) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
     if (typeof window !== 'undefined') {
-      // Check if it's a large screen
       const isLargeScreen = window.innerWidth >= 1024;
       const saved = localStorage.getItem('sidebar-collapsed');
       
-      // Default to collapsed on large screens, expanded on smaller screens
       if (saved !== null) {
         return saved === 'true';
       }
-      return isLargeScreen;
+      return isLargeScreen; // Default collapsed on large screens
     }
-    return true; // Default collapsed for SSR
+    return true;
   });
+
+  const [isLargeScreen, setIsLargeScreen] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.innerWidth >= 1024;
+    }
+    return true;
+  });
+
   const { theme } = useTheme();
+
+  // Handle window resize
+  useEffect(() => {
+    const handleResize = () => {
+      const newIsLargeScreen = window.innerWidth >= 1024;
+      setIsLargeScreen(newIsLargeScreen);
+      
+      // Auto-collapse on large screens if not manually set
+      if (newIsLargeScreen && localStorage.getItem('sidebar-collapsed') === null) {
+        setSidebarCollapsed(true);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const toggleSidebar = () => {
     const newCollapsed = !sidebarCollapsed;
@@ -32,24 +54,48 @@ export default function Layout({ children }: LayoutProps) {
     localStorage.setItem('sidebar-collapsed', newCollapsed.toString());
   };
 
+  // Calculate main content margin based on sidebar state
+  const getMainContentMargin = () => {
+    if (!isLargeScreen) {
+      // On small/medium screens, sidebar is overlay, so no margin needed
+      return 'ml-0';
+    }
+    
+    if (sidebarCollapsed) {
+      // Collapsed sidebar on large screens (64px width)
+      return 'ml-16';
+    } else {
+      // Expanded sidebar on large screens (256px width)
+      return 'ml-64';
+    }
+  };
+
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900 transition-colors duration-200">
-      {/* Overlay Sidebar */}
+      {/* Sidebar */}
       <Sidebar 
         collapsed={sidebarCollapsed} 
-        onToggle={toggleSidebar} 
+        onToggle={toggleSidebar}
+        isLargeScreen={isLargeScreen}
       />
       
-      {/* Main Content Area - Always Full Width */}
-      <div className="min-h-screen">
-        {/* Top Navigation with Centered Container */}
+      {/* Main Content Area */}
+      <div className={clsx(
+        'min-h-screen transition-all duration-300 ease-in-out',
+        getMainContentMargin()
+      )}>
+        {/* Top Navigation */}
         <nav className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-30 shadow-sm">
           <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <TopNav onMenuClick={toggleSidebar} collapsed={sidebarCollapsed} />
+            <TopNav 
+              onMenuClick={toggleSidebar} 
+              collapsed={sidebarCollapsed}
+              isLargeScreen={isLargeScreen}
+            />
           </div>
         </nav>
         
-        {/* Main Content with Centered Container */}
+        {/* Main Content */}
         <main className="w-full">
           <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <motion.div

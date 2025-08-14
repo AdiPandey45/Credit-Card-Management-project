@@ -19,15 +19,13 @@ import NotificationDropdown from '../ui/NotificationDropdown';
 interface TopNavProps {
   onMenuClick: () => void;
   collapsed: boolean;
+  isLargeScreen: boolean;
 }
 
-export default function TopNav({ onMenuClick, collapsed }: TopNavProps) {
+export default function TopNav({ onMenuClick, collapsed, isLargeScreen }: TopNavProps) {
   const { theme, toggleTheme } = useTheme();
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-  
-  // Determine if we're on a large screen
-  const isLargeScreen = typeof window !== 'undefined' && window.innerWidth >= 1024;
 
   return (
     <div className="flex h-16 items-center justify-between">
@@ -37,7 +35,7 @@ export default function TopNav({ onMenuClick, collapsed }: TopNavProps) {
           onClick={onMenuClick}
           className="p-2 rounded text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200"
           title={isLargeScreen 
-            ? (collapsed ? 'Expand sidebar' : 'Collapse sidebar')
+            ? (collapsed ? 'Expand sidebar to full width' : 'Collapse sidebar to icons only')
             : (collapsed ? 'Open menu' : 'Close menu')
           }
         >
