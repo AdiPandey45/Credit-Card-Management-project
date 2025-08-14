@@ -127,7 +127,7 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
                   {isActive && (
                     <motion.div
                       layoutId="active-nav"
-                      className="absolute right-0 top-1/2 h-6 w-1 -translate-y-1/2 rounded-l-full bg-indigo-600 dark:bg-indigo-400"
+                     className="absolute right-1 top-1/2 h-4 w-1 -translate-y-1/2 rounded-full bg-indigo-600 dark:bg-indigo-400"
                     />
                   )}
                   </NavLink>
