@@ -30,12 +30,12 @@ export default function TopNav({ onMenuClick }: TopNavProps) {
           <div className="flex items-center space-x-4">
             <button
               onClick={onMenuClick}
-              className="lg:hidden p-2 rounded-lg text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              className="md:hidden p-2 rounded-lg text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
             >
               <Bars3Icon className="h-5 w-5" />
             </button>
             
-            <div className="hidden lg:block">
+            <div className="hidden md:block">
               <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
                 Dashboard
               </h1>

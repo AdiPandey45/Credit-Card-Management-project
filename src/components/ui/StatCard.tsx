@@ -47,14 +47,14 @@ export default function StatCard({
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ y: -4, scale: 1.02 }}
       transition={{ duration: 0.2 }}
-      className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-xl p-6 shadow-lg border border-gray-200/50 dark:border-gray-700/50 hover:shadow-xl transition-all duration-200"
+      className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-xl p-4 sm:p-6 shadow-lg border border-gray-200/50 dark:border-gray-700/50 hover:shadow-xl transition-all duration-200"
     >
       <div className="flex items-center justify-between">
         <div className="flex-1">
           <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
             {title}
           </p>
-          <p className="text-3xl font-bold text-gray-900 dark:text-white">
+          <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">
             {formatValue(animatedValue)}
           </p>
           {change !== undefined && (
@@ -74,10 +74,10 @@ export default function StatCard({
           )}
         </div>
         <div className={clsx(
-          'w-12 h-12 rounded-xl bg-gradient-to-br flex items-center justify-center',
+          'w-10 sm:w-12 h-10 sm:h-12 rounded-xl bg-gradient-to-br flex items-center justify-center flex-shrink-0',
           colorVariants[color]
         )}>
-          <Icon className="w-6 h-6 text-white" />
+          <Icon className="w-5 sm:w-6 h-5 sm:h-6 text-white" />
         </div>
       </div>
     </motion.div>

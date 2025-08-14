@@ -51,19 +51,19 @@ const statusColors = {
 function SkeletonRow() {
   return (
     <tr className="animate-pulse">
-      <td className="px-6 py-4">
+      <td className="px-3 sm:px-6 py-4">
         <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-20"></div>
       </td>
-      <td className="px-6 py-4">
+      <td className="px-3 sm:px-6 py-4">
         <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-40"></div>
       </td>
-      <td className="px-6 py-4">
+      <td className="px-3 sm:px-6 py-4 hidden sm:table-cell">
         <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded-full w-24"></div>
       </td>
-      <td className="px-6 py-4">
+      <td className="px-3 sm:px-6 py-4">
         <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-16"></div>
       </td>
-      <td className="px-6 py-4">
+      <td className="px-3 sm:px-6 py-4 hidden sm:table-cell">
         <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-12"></div>
       </td>
     </tr>
@@ -115,22 +115,22 @@ export default function TransactionsTable({
       </div>
       
       <div className="overflow-x-auto">
-        <table className="w-full">
+        <table className="w-full min-w-[600px]">
           <thead className="bg-gray-50/80 dark:bg-gray-900/50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                 Date
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                 Description
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider hidden sm:table-cell">
                 Category
               </th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              <th className="px-3 sm:px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                 Amount
               </th>
-              <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              <th className="px-3 sm:px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider hidden sm:table-cell">
                 Status
               </th>
             </tr>
@@ -152,18 +152,21 @@ export default function TransactionsTable({
                       whileHover={{ backgroundColor: 'rgba(99, 102, 241, 0.05)' }}
                       className="transition-colors duration-200 hover:bg-indigo-50/50 dark:hover:bg-indigo-900/20"
                     >
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                      <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
                         {new Date(transaction.date).toLocaleDateString('en-IN', {
                           day: 'numeric',
                           month: 'short',
                         })}
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-3 sm:px-6 py-4">
                         <div className="text-sm font-medium text-gray-900 dark:text-white">
                           {transaction.description}
                         </div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400 sm:hidden">
+                          {transaction.category}
+                        </div>
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-3 sm:px-6 py-4 hidden sm:table-cell">
                         <span className={clsx(
                           'inline-flex px-2 py-1 text-xs font-medium rounded-full',
                           categoryColors[transaction.category] || categoryColors['Others']
@@ -171,7 +174,7 @@ export default function TransactionsTable({
                           {transaction.category}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-right">
+                      <td className="px-3 sm:px-6 py-4 text-right">
                         <span className={clsx(
                           'text-sm font-medium',
                           transaction.amount < 0 
@@ -180,8 +183,13 @@ export default function TransactionsTable({
                         )}>
                           {transaction.amount < 0 ? '-' : '+'}₹{Math.abs(transaction.amount).toLocaleString()}
                         </span>
+                        <div className="flex items-center justify-end mt-1 sm:hidden">
+                          <StatusIcon 
+                            className={clsx('w-4 h-4', statusColors[transaction.status])} 
+                          />
+                        </div>
                       </td>
-                      <td className="px-6 py-4 text-center">
+                      <td className="px-3 sm:px-6 py-4 text-center hidden sm:table-cell">
                         <div className="flex items-center justify-center">
                           <StatusIcon 
                             className={clsx('w-5 h-5', statusColors[transaction.status])} 

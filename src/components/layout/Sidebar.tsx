@@ -33,7 +33,7 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
   return (
     <>
       {/* Mobile sidebar backdrop */}
-      <div className="lg:hidden">
+      <div className="md:hidden">
         <AnimatePresence>
           {!collapsed && (
             <motion.div
@@ -52,15 +52,15 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
         initial={false}
         animate={{
           width: collapsed ? 64 : 256,
-          x: collapsed ? -200 : 0,
         }}
         transition={{ duration: 0.3, ease: 'easeInOut' }}
         className={clsx(
-          'fixed top-0 left-0 z-50 h-full',
+          'fixed top-0 left-0 z-50 h-full transform transition-transform duration-300',
           'bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl',
           'border-r border-gray-200 dark:border-gray-700',
-          'lg:translate-x-0',
-          collapsed ? 'lg:w-16' : 'lg:w-64'
+          'md:translate-x-0',
+          collapsed ? 'md:w-16 -translate-x-full md:translate-x-0' : 'md:w-64 -translate-x-full md:translate-x-0',
+          !collapsed && 'translate-x-0'
         )}
       >
         <div className="flex h-full flex-col">
@@ -93,8 +93,8 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
             {navigation.map((item) => {
               const isActive = location.pathname === item.href;
               return (
-                <NavLink
-                  key={item.name}
+                <div key={item.name} className="relative group">
+                  <NavLink
                   to={item.href}
                   className={clsx(
                     'group flex items-center rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200',
@@ -130,7 +130,15 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
                       className="absolute right-0 top-1/2 h-8 w-1 -translate-y-1/2 rounded-l-full bg-indigo-600 dark:bg-indigo-400"
                     />
                   )}
-                </NavLink>
+                  </NavLink>
+                  
+                  {/* Tooltip for collapsed state */}
+                  {collapsed && (
+                    <div className="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2 py-1 bg-gray-900 dark:bg-gray-700 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50">
+                      {item.name}
+                    </div>
+                  )}
+                </div>
               );
             })}
           </nav>

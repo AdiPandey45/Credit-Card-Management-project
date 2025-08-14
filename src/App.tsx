@@ -9,6 +9,8 @@ import ApplyCard from './pages/ApplyCard';
 import Transactions from './pages/Transactions';
 import Payments from './pages/Payments';
 import Profile from './pages/Profile';
+import Settings from './pages/Settings';
+import Analytics from './pages/Analytics';
 import Login from './pages/Login';
 import { useAuth } from './hooks/useAuth';
 
@@ -38,6 +40,8 @@ function AppRoutes() {
         <Route path="/transactions" element={<Transactions />} />
         <Route path="/payments" element={<Payments />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/settings" element={<Settings />} />
+        <Route path="/analytics" element={<Analytics />} />
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </Layout>

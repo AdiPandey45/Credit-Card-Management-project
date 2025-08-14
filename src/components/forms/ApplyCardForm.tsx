@@ -94,10 +94,10 @@ export default function ApplyCardForm({ onSubmit }: ApplyCardFormProps) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       onSubmit={handleSubmit(onSubmit)}
-      className="space-y-8 bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-xl p-8 shadow-lg border border-gray-200/50 dark:border-gray-700/50"
+      className="space-y-6 sm:space-y-8 bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-xl p-4 sm:p-6 lg:p-8 shadow-lg border border-gray-200/50 dark:border-gray-700/50"
     >
       <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+        <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white mb-2">
           Apply for Credit Card
         </h2>
         <p className="text-gray-600 dark:text-gray-400">
@@ -105,7 +105,7 @@ export default function ApplyCardForm({ onSubmit }: ApplyCardFormProps) {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
         <div className="space-y-6">
           {/* Full Name */}
           <div>
@@ -118,7 +118,7 @@ export default function ApplyCardForm({ onSubmit }: ApplyCardFormProps) {
               type="text"
               placeholder="Enter your full name"
               className={clsx(
-                'w-full px-4 py-3 rounded-xl border transition-all duration-200',
+                'w-full px-4 py-2 sm:py-3 rounded-xl border transition-all duration-200',
                 'bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm',
                 'placeholder-gray-400 dark:placeholder-gray-500',
                 'text-gray-900 dark:text-white',
