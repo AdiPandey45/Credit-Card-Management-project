@@ -18,7 +18,6 @@ const navigation = [
   { name: 'Transactions', href: '/transactions', icon: TableCellsIcon },
   { name: 'Payments', href: '/payments', icon: BanknotesIcon },
   { name: 'Analytics', href: '/analytics', icon: ChartBarIcon },
-  { name: 'Profile', href: '/profile', icon: UserIcon },
   { name: 'Settings', href: '/settings', icon: Cog6ToothIcon },
 ];
 
@@ -127,7 +126,7 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
                   {isActive && (
                     <motion.div
                       layoutId="active-nav"
-                      className="absolute right-0 top-1/2 h-8 w-1 -translate-y-1/2 rounded-l-full bg-indigo-600 dark:bg-indigo-400"
+                      className="absolute right-0 top-1/2 h-6 w-1 -translate-y-1/2 rounded-l-full bg-indigo-600 dark:bg-indigo-400"
                     />
                   )}
                   </NavLink>
@@ -142,33 +141,6 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
               );
             })}
           </nav>
-
-          {/* User profile section */}
-          <div className="border-t border-gray-200 dark:border-gray-700 p-4">
-            <div className={clsx(
-              'flex items-center space-x-3',
-              collapsed && 'justify-center'
-            )}>
-              <img
-                className="h-8 w-8 rounded-full ring-2 ring-gray-200 dark:ring-gray-600"
-                src="https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=2"
-                alt="User avatar"
-              />
-              <AnimatePresence>
-                {!collapsed && (
-                  <motion.div
-                    initial={{ opacity: 0, width: 0 }}
-                    animate={{ opacity: 1, width: 'auto' }}
-                    exit={{ opacity: 0, width: 0 }}
-                    className="overflow-hidden"
-                  >
-                    <p className="text-sm font-medium text-gray-900 dark:text-white">John Doe</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">Premium Member</p>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          </div>
         </div>
       </motion.div>
     </>
