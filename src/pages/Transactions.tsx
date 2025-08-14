@@ -424,14 +424,16 @@ export default function Transactions() {
                 </th>
               </tr>
             </thead>
-            <TransactionsTable
-              transactions={getCurrentTransactions()}
-              onPageChange={handlePageChange}
-              totalPages={totalPages}
-              currentPage={currentPage}
-              loading={isLoading}
-              hideHeader={true}
-            />
+            <tbody>
+              <TransactionsTable
+                transactions={getCurrentTransactions()}
+                onPageChange={handlePageChange}
+                totalPages={totalPages}
+                currentPage={currentPage}
+                loading={isLoading}
+                hideHeader={true}
+              />
+            </tbody>
           </table>
         </div>
         
