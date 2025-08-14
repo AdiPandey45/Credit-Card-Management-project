@@ -56,8 +56,7 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
         transition={{ duration: 0.3, ease: 'easeInOut' }}
         className={clsx(
           'fixed top-0 left-0 z-50 h-full transform transition-transform duration-300',
-          'bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl',
-          'border-r border-gray-200 dark:border-gray-700',
+          'bg-white dark:bg-neutral-900 border-r border-neutral-200 dark:border-neutral-700',
           'md:translate-x-0',
           collapsed ? 'md:w-16 -translate-x-full md:translate-x-0' : 'md:w-64 -translate-x-full md:translate-x-0',
           !collapsed && 'translate-x-0'
@@ -65,12 +64,12 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
       >
         <div className="flex h-full flex-col">
           {/* Logo */}
-          <div className="flex h-16 items-center justify-center border-b border-gray-200 dark:border-gray-700">
+          <div className="flex h-16 items-center justify-center border-b border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800">
             <motion.div
               animate={{ scale: collapsed ? 0.8 : 1 }}
               className="flex items-center space-x-2"
             >
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600">
+              <div className="flex h-8 w-8 items-center justify-center rounded bg-primary-600">
                 <CreditCardIcon className="h-5 w-5 text-white" />
               </div>
               <AnimatePresence>
@@ -79,7 +78,7 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
                     initial={{ opacity: 0, width: 0 }}
                     animate={{ opacity: 1, width: 'auto' }}
                     exit={{ opacity: 0, width: 0 }}
-                    className="text-lg font-semibold text-gray-900 dark:text-white overflow-hidden"
+                    className="text-lg font-semibold text-neutral-900 dark:text-white overflow-hidden"
                   >
                     CreditFlow
                   </motion.span>
@@ -89,7 +88,7 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 space-y-2 p-4">
+          <nav className="flex-1 space-y-1 p-3">
             {navigation.map((item) => {
               const isActive = location.pathname === item.href;
               return (
@@ -97,18 +96,18 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
                   <NavLink
                   to={item.href}
                   className={clsx(
-                    'group flex items-center rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200',
+                    'group flex items-center rounded-md px-3 py-2 text-sm font-medium transition-all duration-150 relative',
                     isActive
-                      ? 'bg-indigo-50 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400'
-                      : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/50'
+                      ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-300 border-r-2 border-primary-600'
+                      : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800'
                   )}
                 >
                   <item.icon
                     className={clsx(
                       'h-5 w-5 flex-shrink-0 transition-colors',
                       isActive
-                        ? 'text-indigo-600 dark:text-indigo-400'
-                        : 'text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300'
+                        ? 'text-primary-600 dark:text-primary-400'
+                        : 'text-neutral-500 dark:text-neutral-400 group-hover:text-neutral-700 dark:group-hover:text-neutral-300'
                     )}
                   />
                   <AnimatePresence>
@@ -123,18 +122,11 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
                       </motion.span>
                     )}
                   </AnimatePresence>
-                  
-                  {isActive && (
-                    <motion.div
-                      layoutId="active-nav"
-                     className="absolute right-1 top-1/2 h-4 w-1 -translate-y-1/2 rounded-full bg-indigo-600 dark:bg-indigo-400"
-                    />
-                  )}
                   </NavLink>
                   
                   {/* Tooltip for collapsed state */}
                   {collapsed && (
-                    <div className="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2 py-1 bg-gray-900 dark:bg-gray-700 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50">
+                    <div className="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2 py-1 bg-neutral-900 dark:bg-neutral-700 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50">
                       {item.name}
                     </div>
                   )}
@@ -142,6 +134,23 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
               );
             })}
           </nav>
+        </div>
+        
+        {/* Footer */}
+        <div className="p-3 border-t border-neutral-200 dark:border-neutral-700">
+          <div className="text-xs text-neutral-500 dark:text-neutral-400 text-center">
+            <AnimatePresence>
+              {!collapsed && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                >
+                  © 2024 CreditFlow
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
       </motion.div>
     </>

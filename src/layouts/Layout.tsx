@@ -26,7 +26,7 @@ export default function Layout({ children }: LayoutProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
+    <div className="min-h-screen bg-neutral-50 dark:bg-neutral-900 transition-colors duration-200">
       <Sidebar 
         collapsed={sidebarCollapsed} 
         onToggle={toggleSidebar} 
@@ -44,7 +44,7 @@ export default function Layout({ children }: LayoutProps) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.2 }}
             className="w-full max-w-none"
           >
             {children}

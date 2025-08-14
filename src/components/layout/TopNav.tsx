@@ -25,20 +25,20 @@ export default function TopNav({ onMenuClick }: TopNavProps) {
   const navigate = useNavigate();
 
   return (
-    <nav className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl border-b border-gray-200 dark:border-gray-700 sticky top-0 z-30">
+    <nav className="bg-white dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-700 sticky top-0 z-30 shadow-sm">
       <div className="px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Left side */}
           <div className="flex items-center space-x-4">
             <button
               onClick={onMenuClick}
-              className="md:hidden p-2 rounded-lg text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              className="md:hidden p-2 rounded-md text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
             >
               <Bars3Icon className="h-5 w-5" />
             </button>
             
             <div className="hidden md:block">
-              <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
+              <h1 className="text-xl font-semibold text-neutral-900 dark:text-white">
                 Dashboard
               </h1>
             </div>
@@ -51,7 +51,7 @@ export default function TopNav({ onMenuClick }: TopNavProps) {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={toggleTheme}
-              className="p-2 rounded-lg text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              className="p-2 rounded-md text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
             >
               {theme === 'light' ? (
                 <MoonIcon className="h-5 w-5" />
@@ -65,17 +65,17 @@ export default function TopNav({ onMenuClick }: TopNavProps) {
 
             {/* User menu */}
             <Menu as="div" className="relative">
-              <Menu.Button className="flex items-center space-x-3 p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+              <Menu.Button className="flex items-center space-x-3 p-1.5 rounded-md hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors">
                 <img
-                  className="h-8 w-8 rounded-full ring-2 ring-gray-200 dark:ring-gray-600"
+                  className="h-8 w-8 rounded-full ring-1 ring-neutral-300 dark:ring-neutral-600"
                   src={user?.avatar}
                   alt={user?.name}
                 />
                 <div className="hidden sm:block text-left">
-                  <p className="text-sm font-medium text-gray-900 dark:text-white">
+                  <p className="text-sm font-medium text-neutral-900 dark:text-white">
                     {user?.name}
                   </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400">
                     Premium Member
                   </p>
                 </div>
@@ -90,17 +90,17 @@ export default function TopNav({ onMenuClick }: TopNavProps) {
                 leaveFrom="transform opacity-100 scale-100"
                 leaveTo="transform opacity-0 scale-95"
               >
-                <Menu.Items className="absolute right-0 mt-2 w-56 origin-top-right rounded-xl bg-white dark:bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none border border-gray-200 dark:border-gray-700">
+                <Menu.Items className="absolute right-0 mt-2 w-56 origin-top-right rounded-md bg-white dark:bg-neutral-800 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none border border-neutral-200 dark:border-neutral-700">
                   <div className="p-1">
                     <Menu.Item>
                       {({ active }) => (
                         <button
                           onClick={() => navigate('/profile')}
                           className={clsx(
-                            'flex w-full items-center rounded-lg px-3 py-2 text-sm',
+                            'flex w-full items-center rounded-md px-3 py-2 text-sm',
                             active
-                              ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white'
-                              : 'text-gray-700 dark:text-gray-300'
+                              ? 'bg-neutral-100 dark:bg-neutral-700 text-neutral-900 dark:text-white'
+                              : 'text-neutral-700 dark:text-neutral-300'
                           )}
                         >
                           <UserIcon className="mr-3 h-4 w-4" />
@@ -113,10 +113,10 @@ export default function TopNav({ onMenuClick }: TopNavProps) {
                         <button
                           onClick={() => navigate('/settings')}
                           className={clsx(
-                            'flex w-full items-center rounded-lg px-3 py-2 text-sm',
+                            'flex w-full items-center rounded-md px-3 py-2 text-sm',
                             active
-                              ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white'
-                              : 'text-gray-700 dark:text-gray-300'
+                              ? 'bg-neutral-100 dark:bg-neutral-700 text-neutral-900 dark:text-white'
+                              : 'text-neutral-700 dark:text-neutral-300'
                           )}
                         >
                           <CogIcon className="mr-3 h-4 w-4" />
@@ -129,10 +129,10 @@ export default function TopNav({ onMenuClick }: TopNavProps) {
                         <button
                           onClick={logout}
                           className={clsx(
-                            'flex w-full items-center rounded-lg px-3 py-2 text-sm',
+                            'flex w-full items-center rounded-md px-3 py-2 text-sm',
                             active
-                              ? 'bg-red-50 dark:bg-red-900/50 text-red-600 dark:text-red-400'
-                              : 'text-red-600 dark:text-red-400'
+                              ? 'bg-error-50 dark:bg-error-900/50 text-error-600 dark:text-error-400'
+                              : 'text-error-600 dark:text-error-400'
                           )}
                         >
                           <ArrowRightOnRectangleIcon className="mr-3 h-4 w-4" />
