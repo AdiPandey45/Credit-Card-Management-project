@@ -18,6 +18,7 @@ const navigation = [
   { name: 'Transactions', href: '/transactions', icon: TableCellsIcon },
   { name: 'Payments', href: '/payments', icon: BanknotesIcon },
   { name: 'Analytics', href: '/analytics', icon: ChartBarIcon },
+  { name: 'Profile', href: '/profile', icon: UserIcon },
   { name: 'Settings', href: '/settings', icon: Cog6ToothIcon },
 ];
 
