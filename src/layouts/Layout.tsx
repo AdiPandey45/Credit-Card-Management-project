@@ -38,7 +38,7 @@ export default function Layout({ children }: LayoutProps) {
         {/* Top Navigation with Centered Container */}
         <nav className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-30 shadow-sm">
           <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <TopNav onMenuClick={toggleSidebar} />
+            <TopNav onMenuClick={toggleSidebar} collapsed={sidebarCollapsed} />
           </div>
         </nav>
         

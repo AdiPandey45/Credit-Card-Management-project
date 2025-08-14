@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import clsx from 'clsx';
 import {
   Bars3Icon,
+  XMarkIcon,
   SunIcon,
   MoonIcon,
   UserIcon,
@@ -17,9 +18,10 @@ import NotificationDropdown from '../ui/NotificationDropdown';
 
 interface TopNavProps {
   onMenuClick: () => void;
+  collapsed: boolean;
 }
 
-export default function TopNav({ onMenuClick }: TopNavProps) {
+export default function TopNav({ onMenuClick, collapsed }: TopNavProps) {
   const { theme, toggleTheme } = useTheme();
   const { user, logout } = useAuth();
   const navigate = useNavigate();
@@ -32,7 +34,11 @@ export default function TopNav({ onMenuClick }: TopNavProps) {
           onClick={onMenuClick}
           className="p-2 rounded text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
         >
-          <Bars3Icon className="h-5 w-5" />
+          {collapsed ? (
+            <Bars3Icon className="h-5 w-5" />
+          ) : (
+            <XMarkIcon className="h-5 w-5" />
+          )}
         </button>
         
         <div className="hidden sm:block">
