@@ -52,7 +52,7 @@ export default function Sidebar({ collapsed, onToggle, isLargeScreen }: SidebarP
         )}
       </AnimatePresence>
 
-      {/* Sidebar */}
+      {/* Sidebar - Fixed positioning for proper alignment */}
       <AnimatePresence>
         {!isHidden && (
           <motion.div
@@ -69,13 +69,13 @@ export default function Sidebar({ collapsed, onToggle, isLargeScreen }: SidebarP
             }}
             transition={{ duration: 0.3, ease: 'easeInOut' }}
             className={clsx(
-              'fixed top-0 left-0 z-50 h-full bg-white dark:bg-neutral-900 border-r border-neutral-200 dark:border-neutral-700 shadow-xl',
-              isLargeScreen ? 'lg:relative lg:z-30' : ''
+              'fixed top-0 left-0 h-full bg-white dark:bg-neutral-900 border-r border-neutral-200 dark:border-neutral-700 shadow-xl',
+              isLargeScreen ? 'z-30' : 'z-50'
             )}
             style={{ width: sidebarWidth }}
           >
             <div className="flex h-full flex-col">
-              {/* Logo */}
+              {/* Logo - Aligned with top navbar */}
               <div className={clsx(
                 'flex h-16 items-center border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800',
                 isIconsOnly ? 'justify-center px-2' : 'justify-between px-4'

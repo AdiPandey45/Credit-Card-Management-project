@@ -27,6 +27,15 @@ export default function TopNav({ onMenuClick, collapsed, isLargeScreen }: TopNav
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
+  // Get tooltip text based on screen size and sidebar state
+  const getToggleTooltip = () => {
+    if (isLargeScreen) {
+      return collapsed ? 'Expand sidebar' : 'Collapse to icons only';
+    } else {
+      return collapsed ? 'Open menu' : 'Close menu';
+    }
+  };
+
   return (
     <div className="flex h-16 items-center justify-between">
       {/* Left side */}
@@ -34,10 +43,7 @@ export default function TopNav({ onMenuClick, collapsed, isLargeScreen }: TopNav
         <button
           onClick={onMenuClick}
           className="p-2 rounded text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200"
-          title={isLargeScreen 
-            ? (collapsed ? 'Expand sidebar to full width' : 'Collapse sidebar to icons only')
-            : (collapsed ? 'Open menu' : 'Close menu')
-          }
+          title={getToggleTooltip()}
         >
           {isLargeScreen ? (
             collapsed ? (

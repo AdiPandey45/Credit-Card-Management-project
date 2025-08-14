@@ -72,19 +72,19 @@ export default function Layout({ children }: LayoutProps) {
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900 transition-colors duration-200">
-      {/* Sidebar */}
+      {/* Sidebar - Fixed positioning */}
       <Sidebar 
         collapsed={sidebarCollapsed} 
         onToggle={toggleSidebar}
         isLargeScreen={isLargeScreen}
       />
       
-      {/* Main Content Area */}
+      {/* Main Content Area - Adjusts based on sidebar state */}
       <div className={clsx(
         'min-h-screen transition-all duration-300 ease-in-out',
         getMainContentMargin()
       )}>
-        {/* Top Navigation */}
+        {/* Top Navigation - Aligned with main content */}
         <nav className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-30 shadow-sm">
           <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <TopNav 
@@ -95,7 +95,7 @@ export default function Layout({ children }: LayoutProps) {
           </div>
         </nav>
         
-        {/* Main Content */}
+        {/* Main Content - Centered within available space */}
         <main className="w-full">
           <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <motion.div
