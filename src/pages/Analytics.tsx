@@ -2,8 +2,8 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import {
   ChartBarIcon,
-  TrendingUpIcon,
-  TrendingDownIcon,
+  ArrowTrendingUpIcon,
+  ArrowTrendingDownIcon,
   CreditCardIcon,
   BanknotesIcon,
   GiftIcon,
@@ -107,9 +107,9 @@ export default function Analytics() {
                   : 'text-red-600 dark:text-red-400'
               }`}>
                 {metric.trend === 'up' ? (
-                  <TrendingUpIcon className="w-4 h-4 mr-1" />
+                  <ArrowTrendingUpIcon className="w-4 h-4 mr-1" />
                 ) : (
-                  <TrendingDownIcon className="w-4 h-4 mr-1" />
+                  <ArrowTrendingDownIcon className="w-4 h-4 mr-1" />
                 )}
                 {metric.change}
               </div>
