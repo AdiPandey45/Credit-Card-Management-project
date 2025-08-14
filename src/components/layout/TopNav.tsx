@@ -4,7 +4,6 @@ import { motion } from 'framer-motion';
 import clsx from 'clsx';
 import {
   Bars3Icon,
-  BellIcon,
   SunIcon,
   MoonIcon,
   UserIcon,
@@ -13,6 +12,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useAuth } from '../../hooks/useAuth';
+import NotificationDropdown from '../ui/NotificationDropdown';
 
 interface TopNavProps {
   onMenuClick: () => void;
@@ -58,19 +58,8 @@ export default function TopNav({ onMenuClick }: TopNavProps) {
               )}
             </motion.button>
 
-            {/* Notifications */}
-            <div className="relative">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="p-2 rounded-lg text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors relative"
-              >
-                <BellIcon className="h-5 w-5" />
-                <span className="absolute -top-1 -right-1 h-4 w-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
-                  3
-                </span>
-              </motion.button>
-            </div>
+            {/* Notification Dropdown */}
+            <NotificationDropdown />
 
             {/* User menu */}
             <Menu as="div" className="relative">
