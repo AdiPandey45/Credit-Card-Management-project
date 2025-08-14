@@ -32,26 +32,26 @@ export default function TopNav({ onMenuClick }: TopNavProps) {
           <div className="flex items-center space-x-4">
             <button
               onClick={onMenuClick}
-              className="md:hidden p-2 rounded-md text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+              className="md:hidden p-2 rounded text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
             >
               <Bars3Icon className="h-5 w-5" />
             </button>
             
             <div className="hidden md:block">
-              <h1 className="text-xl font-semibold text-neutral-900 dark:text-white">
+              <h1 className="text-xl font-semibold text-slate-900 dark:text-white">
                 Dashboard
               </h1>
             </div>
           </div>
 
           {/* Right side */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2 sm:space-x-4">
             {/* Theme toggle */}
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={toggleTheme}
-              className="p-2 rounded-md text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+              className="p-2 rounded text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
             >
               {theme === 'light' ? (
                 <MoonIcon className="h-5 w-5" />
@@ -65,17 +65,17 @@ export default function TopNav({ onMenuClick }: TopNavProps) {
 
             {/* User menu */}
             <Menu as="div" className="relative">
-              <Menu.Button className="flex items-center space-x-3 p-1.5 rounded-md hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors">
+              <Menu.Button className="flex items-center space-x-2 sm:space-x-3 p-1.5 rounded hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
                 <img
                   className="h-8 w-8 rounded-full ring-1 ring-neutral-300 dark:ring-neutral-600"
                   src={user?.avatar}
                   alt={user?.name}
                 />
                 <div className="hidden sm:block text-left">
-                  <p className="text-sm font-medium text-neutral-900 dark:text-white">
+                  <p className="text-sm font-medium text-slate-900 dark:text-white">
                     {user?.name}
                   </p>
-                  <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
                     Premium Member
                   </p>
                 </div>
@@ -90,17 +90,17 @@ export default function TopNav({ onMenuClick }: TopNavProps) {
                 leaveFrom="transform opacity-100 scale-100"
                 leaveTo="transform opacity-0 scale-95"
               >
-                <Menu.Items className="absolute right-0 mt-2 w-56 origin-top-right rounded-md bg-white dark:bg-neutral-800 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none border border-neutral-200 dark:border-neutral-700">
+                <Menu.Items className="absolute right-0 mt-2 w-48 sm:w-56 origin-top-right rounded bg-white dark:bg-slate-800 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none border border-slate-200 dark:border-slate-700">
                   <div className="p-1">
                     <Menu.Item>
                       {({ active }) => (
                         <button
                           onClick={() => navigate('/profile')}
                           className={clsx(
-                            'flex w-full items-center rounded-md px-3 py-2 text-sm',
+                            'flex w-full items-center rounded px-3 py-2 text-sm',
                             active
-                              ? 'bg-neutral-100 dark:bg-neutral-700 text-neutral-900 dark:text-white'
-                              : 'text-neutral-700 dark:text-neutral-300'
+                              ? 'bg-slate-100 dark:bg-slate-700 text-slate-900 dark:text-white'
+                              : 'text-slate-700 dark:text-slate-300'
                           )}
                         >
                           <UserIcon className="mr-3 h-4 w-4" />
@@ -113,10 +113,10 @@ export default function TopNav({ onMenuClick }: TopNavProps) {
                         <button
                           onClick={() => navigate('/settings')}
                           className={clsx(
-                            'flex w-full items-center rounded-md px-3 py-2 text-sm',
+                            'flex w-full items-center rounded px-3 py-2 text-sm',
                             active
-                              ? 'bg-neutral-100 dark:bg-neutral-700 text-neutral-900 dark:text-white'
-                              : 'text-neutral-700 dark:text-neutral-300'
+                              ? 'bg-slate-100 dark:bg-slate-700 text-slate-900 dark:text-white'
+                              : 'text-slate-700 dark:text-slate-300'
                           )}
                         >
                           <CogIcon className="mr-3 h-4 w-4" />
@@ -129,7 +129,7 @@ export default function TopNav({ onMenuClick }: TopNavProps) {
                         <button
                           onClick={logout}
                           className={clsx(
-                            'flex w-full items-center rounded-md px-3 py-2 text-sm',
+                            'flex w-full items-center rounded px-3 py-2 text-sm',
                             active
                               ? 'bg-error-50 dark:bg-error-900/50 text-error-600 dark:text-error-400'
                               : 'text-error-600 dark:text-error-400'

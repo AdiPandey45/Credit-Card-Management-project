@@ -10,6 +10,8 @@ import {
   UserIcon,
   Cog6ToothIcon,
   ChartBarIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
 } from '@heroicons/react/24/outline';
 
 const navigation = [
@@ -57,14 +59,14 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
         className={clsx(
           'fixed top-0 left-0 z-50 h-full transform transition-transform duration-300',
           'bg-white dark:bg-neutral-900 border-r border-neutral-200 dark:border-neutral-700',
-          'md:translate-x-0',
+          'md:translate-x-0 shadow-lg',
           collapsed ? 'md:w-16 -translate-x-full md:translate-x-0' : 'md:w-64 -translate-x-full md:translate-x-0',
           !collapsed && 'translate-x-0'
         )}
       >
         <div className="flex h-full flex-col">
           {/* Logo */}
-          <div className="flex h-16 items-center justify-center border-b border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800">
+          <div className="flex h-16 items-center justify-between px-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">
             <motion.div
               animate={{ scale: collapsed ? 0.8 : 1 }}
               className="flex items-center space-x-2"
@@ -85,6 +87,18 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
                 )}
               </AnimatePresence>
             </motion.div>
+            
+            {/* Collapse Toggle Button - Desktop Only */}
+            <button
+              onClick={onToggle}
+              className="hidden md:flex p-1.5 rounded hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+            >
+              {collapsed ? (
+                <ChevronRightIcon className="w-4 h-4 text-slate-600 dark:text-slate-400" />
+              ) : (
+                <ChevronLeftIcon className="w-4 h-4 text-slate-600 dark:text-slate-400" />
+              )}
+            </button>
           </div>
 
           {/* Navigation */}

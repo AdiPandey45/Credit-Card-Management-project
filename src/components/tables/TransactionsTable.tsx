@@ -52,19 +52,19 @@ function SkeletonRow() {
   return (
     <tr className="animate-pulse">
       <td className="px-3 sm:px-6 py-4">
-        <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-20"></div>
+        <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-20"></div>
       </td>
       <td className="px-3 sm:px-6 py-4">
-        <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-40"></div>
+        <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-40"></div>
       </td>
       <td className="px-3 sm:px-6 py-4 hidden sm:table-cell">
-        <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded-full w-24"></div>
+        <div className="h-6 bg-slate-200 dark:bg-slate-700 rounded-full w-24"></div>
       </td>
       <td className="px-3 sm:px-6 py-4">
-        <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-16"></div>
+        <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-16"></div>
       </td>
       <td className="px-3 sm:px-6 py-4 hidden sm:table-cell">
-        <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-12"></div>
+        <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-12"></div>
       </td>
     </tr>
   );
@@ -73,18 +73,18 @@ function SkeletonRow() {
 function EmptyState() {
   return (
     <div className="text-center py-12">
-      <div className="mx-auto h-24 w-24 text-gray-400 dark:text-gray-600 mb-4">
+      <div className="mx-auto h-24 w-24 text-slate-400 dark:text-slate-600 mb-4">
         <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
         </svg>
       </div>
-      <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+      <h3 className="text-lg font-medium text-slate-900 dark:text-white mb-2">
         No transactions yet
       </h3>
-      <p className="text-gray-500 dark:text-gray-400 mb-6">
+      <p className="text-slate-500 dark:text-slate-400 mb-6">
         Your transaction history will appear here once you start using your card.
       </p>
-      <button className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
+      <button className="px-4 py-2 bg-primary-600 text-white rounded hover:bg-primary-700 transition-colors">
         Make your first transaction
       </button>
     </div>
@@ -100,42 +100,42 @@ export default function TransactionsTable({
 }: TransactionsTableProps) {
   if (!loading && transactions.length === 0) {
     return (
-      <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-xl shadow-lg border border-gray-200/50 dark:border-gray-700/50">
+      <div className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 shadow-sm">
         <EmptyState />
       </div>
     );
   }
 
   return (
-    <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-xl shadow-lg border border-gray-200/50 dark:border-gray-700/50 overflow-hidden">
-      <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+    <div className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
+      <div className="px-4 sm:px-6 py-4 border-b border-slate-200 dark:border-slate-700">
+        <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
           Recent Transactions
         </h3>
       </div>
       
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[600px]">
-          <thead className="bg-gray-50/80 dark:bg-gray-900/50">
+        <table className="w-full min-w-[500px] sm:min-w-[600px]">
+          <thead className="bg-slate-50 dark:bg-slate-900/50">
             <tr>
-              <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                 Date
               </th>
-              <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                 Description
               </th>
-              <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider hidden sm:table-cell">
+              <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider hidden sm:table-cell">
                 Category
               </th>
-              <th className="px-3 sm:px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              <th className="px-3 sm:px-6 py-3 text-right text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                 Amount
               </th>
-              <th className="px-3 sm:px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider hidden sm:table-cell">
+              <th className="px-3 sm:px-6 py-3 text-center text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider hidden sm:table-cell">
                 Status
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+          <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
             <AnimatePresence mode="popLayout">
               {loading ? (
                 Array.from({ length: 5 }, (_, i) => <SkeletonRow key={`skeleton-${i}`} />)
@@ -150,19 +150,19 @@ export default function TransactionsTable({
                       exit={{ opacity: 0, y: -20 }}
                       transition={{ delay: index * 0.05 }}
                       whileHover={{ backgroundColor: 'rgba(99, 102, 241, 0.05)' }}
-                      className="transition-colors duration-200 hover:bg-indigo-50/50 dark:hover:bg-indigo-900/20"
+                      className="transition-colors duration-200 hover:bg-primary-50/50 dark:hover:bg-primary-900/20"
                     >
-                      <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                      <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-sm text-slate-900 dark:text-white">
                         {new Date(transaction.date).toLocaleDateString('en-IN', {
                           day: 'numeric',
                           month: 'short',
                         })}
                       </td>
                       <td className="px-3 sm:px-6 py-4">
-                        <div className="text-sm font-medium text-gray-900 dark:text-white">
+                        <div className="text-sm font-medium text-slate-900 dark:text-white">
                           {transaction.description}
                         </div>
-                        <div className="text-xs text-gray-500 dark:text-gray-400 sm:hidden">
+                        <div className="text-xs text-slate-500 dark:text-slate-400 sm:hidden">
                           {transaction.category}
                         </div>
                       </td>
@@ -207,22 +207,22 @@ export default function TransactionsTable({
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="px-6 py-4 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between">
-          <div className="text-sm text-gray-700 dark:text-gray-300">
+        <div className="px-4 sm:px-6 py-4 border-t border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="text-sm text-slate-700 dark:text-slate-300">
             Page {currentPage} of {totalPages}
           </div>
           <div className="flex items-center space-x-2">
             <button
               onClick={() => onPageChange(currentPage - 1)}
               disabled={currentPage <= 1}
-              className="p-2 rounded-lg border border-gray-300 dark:border-gray-600 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+              className="p-2 rounded border border-slate-300 dark:border-slate-600 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
             >
               <ChevronLeftIcon className="w-4 h-4" />
             </button>
             <button
               onClick={() => onPageChange(currentPage + 1)}
               disabled={currentPage >= totalPages}
-              className="p-2 rounded-lg border border-gray-300 dark:border-gray-600 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+              className="p-2 rounded border border-slate-300 dark:border-slate-600 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
             >
               <ChevronRightIcon className="w-4 h-4" />
             </button>

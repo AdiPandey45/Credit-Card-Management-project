@@ -76,11 +76,61 @@ const mockTransactions = [
     amount: -799,
     status: 'failed' as const,
   },
+  {
+    id: '6',
+    date: '2024-01-10',
+    description: 'Flipkart - Electronics',
+    category: 'Shopping',
+    amount: -15600,
+    status: 'completed' as const,
+  },
+  {
+    id: '7',
+    date: '2024-01-09',
+    description: 'Zomato - Food Order',
+    category: 'Food & Dining',
+    amount: -850,
+    status: 'completed' as const,
+  },
+  {
+    id: '8',
+    date: '2024-01-08',
+    description: 'Petrol Pump',
+    category: 'Transport',
+    amount: -3200,
+    status: 'completed' as const,
+  },
+  {
+    id: '9',
+    date: '2024-01-07',
+    description: 'Movie Tickets',
+    category: 'Entertainment',
+    amount: -600,
+    status: 'completed' as const,
+  },
+  {
+    id: '10',
+    date: '2024-01-06',
+    description: 'Grocery Store',
+    category: 'Food & Dining',
+    amount: -2400,
+    status: 'completed' as const,
+  },
 ];
 
 export default function Dashboard() {
+  const [currentPage, setCurrentPage] = useState(1);
+  const transactionsPerPage = 5;
+  const totalPages = Math.ceil(mockTransactions.length / transactionsPerPage);
+  
+  const getCurrentTransactions = () => {
+    const startIndex = (currentPage - 1) * transactionsPerPage;
+    const endIndex = startIndex + transactionsPerPage;
+    return mockTransactions.slice(startIndex, endIndex);
+  };
+
   const handlePageChange = (page: number) => {
-    console.log('Page changed to:', page);
+    setCurrentPage(page);
   };
 
   return (
@@ -165,10 +215,10 @@ export default function Dashboard() {
         transition={{ delay: 0.4 }}
       >
         <TransactionsTable
-          transactions={mockTransactions}
+          transactions={getCurrentTransactions()}
           onPageChange={handlePageChange}
-          totalPages={3}
-          currentPage={1}
+          totalPages={totalPages}
+          currentPage={currentPage}
         />
       </motion.div>
     </div>
