@@ -57,19 +57,19 @@ export default function Transactions() {
   };
 
   return (
-    <div className="space-y-4 sm:space-y-6">
+    <div className="space-y-6 sm:space-y-8 max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">Transactions</h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-1">
+          <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white">Transactions</h1>
+          <p className="text-slate-600 dark:text-slate-400 mt-2">
             View and manage your transaction history
           </p>
         </div>
         <motion.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          className="px-3 sm:px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors flex items-center space-x-2 text-sm sm:text-base"
+          className="px-4 sm:px-6 py-3 bg-primary-600 text-white rounded hover:bg-primary-700 transition-colors flex items-center space-x-2 text-sm sm:text-base shadow-sm"
         >
           <CalendarDaysIcon className="w-4 h-4" />
           <span>Export CSV</span>
@@ -80,9 +80,9 @@ export default function Transactions() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 p-4 sm:p-6 shadow-sm"
+        className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 p-6 sm:p-8 shadow-sm"
       >
-        <div className="flex flex-col sm:flex-row lg:flex-row gap-4">
+        <div className="flex flex-col sm:flex-row lg:flex-row gap-4 sm:gap-6">
           {/* Search */}
           <div className="flex-1 relative">
             <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
@@ -91,17 +91,17 @@ export default function Transactions() {
               placeholder="Search transactions..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 sm:py-3 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 text-sm sm:text-base"
+              className="w-full pl-10 pr-4 py-3 sm:py-4 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 text-base"
             />
           </div>
 
           {/* Category Filter */}
-          <div className="relative flex-1 sm:flex-none sm:min-w-[180px]">
+          <div className="relative flex-1 sm:flex-none sm:min-w-[200px]">
             <FunnelIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="w-full pl-10 pr-8 py-2 sm:py-3 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-slate-900 dark:text-white appearance-none text-sm sm:text-base"
+              className="w-full pl-10 pr-8 py-3 sm:py-4 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-slate-900 dark:text-white appearance-none text-base"
             >
               <option value="all">All Categories</option>
               <option value="Food & Dining">Food & Dining</option>
@@ -115,12 +115,12 @@ export default function Transactions() {
           </div>
 
           {/* Date Range */}
-          <div className="relative flex-1 sm:flex-none sm:min-w-[150px]">
+          <div className="relative flex-1 sm:flex-none sm:min-w-[180px]">
             <CalendarDaysIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
             <select
               value={dateRange}
               onChange={(e) => setDateRange(e.target.value)}
-              className="w-full pl-10 pr-8 py-2 sm:py-3 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-slate-900 dark:text-white appearance-none text-sm sm:text-base"
+              className="w-full pl-10 pr-8 py-3 sm:py-4 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-slate-900 dark:text-white appearance-none text-base"
             >
               <option value="all">All Time</option>
               <option value="today">Today</option>

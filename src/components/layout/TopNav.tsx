@@ -25,8 +25,8 @@ export default function TopNav({ onMenuClick }: TopNavProps) {
   const navigate = useNavigate();
 
   return (
-    <nav className="bg-white dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-700 sticky top-0 z-30 shadow-sm">
-      <div className="px-4 sm:px-6 lg:px-8">
+    <nav className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-30 shadow-sm">
+      <div className="px-4 sm:px-6 lg:px-8 xl:px-12">
         <div className="flex h-16 items-center justify-between">
           {/* Left side */}
           <div className="flex items-center space-x-4">

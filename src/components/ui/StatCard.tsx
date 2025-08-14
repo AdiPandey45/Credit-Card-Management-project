@@ -47,37 +47,37 @@ export default function StatCard({
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ y: -2 }}
       transition={{ duration: 0.15 }}
-      className="bg-white dark:bg-neutral-800 rounded-lg p-4 sm:p-6 shadow-card hover:shadow-card-hover border border-neutral-200 dark:border-neutral-700 transition-all duration-150"
+      className="bg-white dark:bg-slate-800 rounded p-6 sm:p-8 shadow-sm hover:shadow border border-slate-200 dark:border-slate-700 transition-all duration-150"
     >
       <div className="flex items-center justify-between">
         <div className="flex-1">
-          <p className="text-sm font-medium text-neutral-600 dark:text-neutral-400 mb-1">
+          <p className="text-base font-medium text-slate-600 dark:text-slate-400 mb-2">
             {title}
           </p>
-          <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-neutral-900 dark:text-white">
+          <p className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 dark:text-white">
             {formatValue(animatedValue)}
           </p>
           {change !== undefined && (
-            <div className="flex items-center mt-2">
+            <div className="flex items-center mt-3">
               <span className={clsx(
-                'text-sm font-medium',
+                'text-base font-medium',
                 change >= 0 
                   ? 'text-success-600 dark:text-success-400' 
                   : 'text-error-600 dark:text-error-400'
               )}>
                 {change >= 0 ? '+' : ''}{change}%
               </span>
-              <span className="text-xs text-neutral-500 dark:text-neutral-400 ml-1">
+              <span className="text-sm text-slate-500 dark:text-slate-400 ml-2">
                 from last month
               </span>
             </div>
           )}
         </div>
         <div className={clsx(
-          'w-10 sm:w-12 h-10 sm:h-12 rounded-lg flex items-center justify-center flex-shrink-0',
+          'w-12 sm:w-14 lg:w-16 h-12 sm:h-14 lg:h-16 rounded flex items-center justify-center flex-shrink-0',
           colorVariants[color]
         )}>
-          <Icon className="w-5 sm:w-6 h-5 sm:h-6 text-white" />
+          <Icon className="w-6 sm:w-7 lg:w-8 h-6 sm:h-7 lg:h-8 text-white" />
         </div>
       </div>
     </motion.div>

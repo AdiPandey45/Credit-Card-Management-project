@@ -134,33 +134,33 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="space-y-6 sm:space-y-8">
+    <div className="space-y-6 sm:space-y-8 max-w-7xl mx-auto">
       {/* Welcome Section */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-gradient-to-r from-primary-600 to-primary-700 rounded-lg p-4 sm:p-6 lg:p-8 text-white relative overflow-hidden"
+        className="bg-primary-600 rounded p-6 sm:p-8 lg:p-10 text-white relative overflow-hidden shadow-sm"
       >
         <div className="relative z-10">
-          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-2">Welcome back, John</h1>
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-3">Welcome back, John</h1>
           <p className="text-primary-100 mb-4">
             Your account overview
           </p>
-          <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
-            <div className="bg-white/10 rounded px-4 py-2">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-3 sm:space-y-0 sm:space-x-6">
+            <div className="bg-white/10 rounded px-5 py-3">
               <span className="text-sm font-medium">Available Credit</span>
-              <p className="text-lg sm:text-xl font-bold">₹4,54,680</p>
+              <p className="text-xl sm:text-2xl font-bold">₹4,54,680</p>
             </div>
-            <div className="bg-white/10 rounded px-4 py-2">
+            <div className="bg-white/10 rounded px-5 py-3">
               <span className="text-sm font-medium">Next Payment Due</span>
-              <p className="text-lg sm:text-xl font-bold">Jan 25</p>
+              <p className="text-xl sm:text-2xl font-bold">Jan 25</p>
             </div>
           </div>
         </div>
       </motion.div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
         {stats.map((stat, index) => (
           <StatCard
             key={stat.title}
@@ -179,12 +179,12 @@ export default function Dashboard() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
-        className="bg-white dark:bg-neutral-800 rounded-lg p-4 sm:p-6 shadow-card border border-neutral-200 dark:border-neutral-700"
+        className="bg-white dark:bg-slate-800 rounded p-6 sm:p-8 shadow-sm border border-slate-200 dark:border-slate-700"
       >
-        <h3 className="text-lg font-semibold text-neutral-900 dark:text-white mb-4">
+        <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-6">
           Quick Actions
         </h3>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6">
           {[
             { name: 'Pay Bill', icon: BanknotesIcon, color: 'bg-success-500' },
             { name: 'View Statement', icon: ChartBarSquareIcon, color: 'bg-primary-500' },
@@ -195,12 +195,12 @@ export default function Dashboard() {
               key={action.name}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.95 }}
-              className="p-3 sm:p-4 rounded-lg bg-neutral-50 dark:bg-neutral-700/50 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors text-center group"
+              className="p-4 sm:p-6 rounded bg-slate-50 dark:bg-slate-700/50 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors text-center group"
             >
-              <div className={`w-8 sm:w-10 lg:w-12 h-8 sm:h-10 lg:h-12 ${action.color} rounded-lg flex items-center justify-center mx-auto mb-2 group-hover:scale-105 transition-transform`}>
-                <action.icon className="w-4 sm:w-5 lg:w-6 h-4 sm:h-5 lg:h-6 text-white" />
+              <div className={`w-10 sm:w-12 lg:w-14 h-10 sm:h-12 lg:h-14 ${action.color} rounded flex items-center justify-center mx-auto mb-3 group-hover:scale-105 transition-transform`}>
+                <action.icon className="w-5 sm:w-6 lg:w-7 h-5 sm:h-6 lg:h-7 text-white" />
               </div>
-              <span className="text-xs sm:text-sm font-medium text-neutral-700 dark:text-neutral-300">
+              <span className="text-sm sm:text-base font-medium text-slate-700 dark:text-slate-300">
                 {action.name}
               </span>
             </motion.button>
