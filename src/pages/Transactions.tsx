@@ -270,7 +270,7 @@ export default function Transactions() {
   const hasActiveFilters = searchTerm || selectedCategory !== 'all' || dateRange !== 'all';
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto p-4 sm:p-6">
+    <div className="space-y-6">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}

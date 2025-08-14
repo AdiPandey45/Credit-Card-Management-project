@@ -42,7 +42,7 @@ export default function Analytics() {
   const maxRewards = Math.max(...rewardsData.map(d => d.points));
 
   return (
-    <div className="max-w-7xl mx-auto space-y-6 p-4 sm:p-6">
+    <div className="space-y-6">
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}

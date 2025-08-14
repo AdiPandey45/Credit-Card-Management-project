@@ -27,32 +27,34 @@ export default function Layout({ children }: LayoutProps) {
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900 transition-colors duration-200">
+      {/* Overlay Sidebar */}
       <Sidebar 
         collapsed={sidebarCollapsed} 
         onToggle={toggleSidebar} 
       />
       
-      <div className={clsx(
-        'transition-all duration-300 ease-in-out min-h-screen',
-        'ml-0 md:ml-64',
-        sidebarCollapsed && 'md:ml-16'
-      )}>
-        <TopNav onMenuClick={toggleSidebar} />
+      {/* Main Content Area - Always Full Width */}
+      <div className="min-h-screen">
+        {/* Top Navigation with Centered Container */}
+        <nav className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-30 shadow-sm">
+          <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <TopNav onMenuClick={toggleSidebar} />
+          </div>
+        </nav>
         
-        <main className={clsx(
-          'transition-all duration-300 ease-in-out',
-          'px-4 py-6 sm:px-6 lg:px-8 pb-8',
-          'w-full max-w-none'
-        )}>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.2 }}
-            className="w-full"
-          >
-            {children}
-          </motion.div>
+        {/* Main Content with Centered Container */}
+        <main className="w-full">
+          <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.2 }}
+              className="w-full"
+            >
+              {children}
+            </motion.div>
+          </div>
         </main>
       </div>
     </div>

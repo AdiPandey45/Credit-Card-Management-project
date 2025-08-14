@@ -40,7 +40,7 @@ export default function ApplyCard() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6 sm:space-y-8 p-4 sm:p-0">
+    <div className="max-w-4xl mx-auto space-y-6 sm:space-y-8">
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
