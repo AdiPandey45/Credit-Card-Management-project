@@ -34,22 +34,23 @@ export default function Layout({ children }: LayoutProps) {
       
       <div className={clsx(
         'transition-all duration-300 ease-in-out min-h-screen',
-        'ml-0 md:ml-64',
+        'ml-0',
+        !sidebarCollapsed && 'md:ml-64',
         sidebarCollapsed && 'md:ml-16'
       )}>
         <TopNav onMenuClick={toggleSidebar} />
         
         <main className={clsx(
           'transition-all duration-300 ease-in-out',
-          'px-4 py-6 sm:px-6 lg:px-8 xl:px-12 pb-8',
-          'max-w-none mx-auto'
+          'px-4 py-6 sm:px-6 lg:px-8 pb-8',
+          'w-full'
         )}>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.2 }}
-            className="w-full"
+            className="w-full max-w-7xl mx-auto"
           >
             {children}
           </motion.div>

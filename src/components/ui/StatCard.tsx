@@ -13,11 +13,11 @@ interface StatCardProps {
 }
 
 const colorVariants = {
-  blue: 'from-blue-500 to-indigo-600',
-  green: 'from-green-500 to-teal-600',
-  purple: 'from-purple-500 to-indigo-600',
-  orange: 'from-orange-500 to-red-500',
-  red: 'from-red-500 to-pink-600',
+  blue: 'bg-blue-600',
+  green: 'bg-green-600',
+  purple: 'bg-purple-600',
+  orange: 'bg-orange-600',
+  red: 'bg-red-600',
 };
 
 export default function StatCard({ 

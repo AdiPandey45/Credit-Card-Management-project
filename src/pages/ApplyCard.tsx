@@ -90,7 +90,7 @@ export default function ApplyCard() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
                 onClick={() => setSubmitStatus('idle')}
-                className="px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-medium rounded-xl hover:shadow-lg transition-all duration-200"
+                className="px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded hover:shadow transition-all duration-200"
               >
                 Submit Another Application
               </button>
@@ -124,7 +124,7 @@ export default function ApplyCard() {
             </p>
             <button
               onClick={() => setSubmitStatus('idle')}
-              className="px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-medium rounded-xl hover:shadow-lg transition-all duration-200"
+              className="px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded hover:shadow transition-all duration-200"
             >
               Try Again
             </button>
