@@ -204,26 +204,14 @@ export default function TransactionsTable({
   // If hideHeader is true, render only the table content without wrapper
   if (hideHeader) {
     return (
-      <motion.tbody>
+      <tbody>
         <AnimatePresence mode="wait">
           {loading ? (
-            <motion.tbody
-              key="loading"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-            >
+            <>
               {Array.from({ length: 5 }, (_, i) => <SkeletonRow key={`skeleton-${i}`} />)}
-            </motion.tbody>
+            </>
           ) : (
-            <motion.tbody
-              key={`page-${currentPage}`}
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
-            >
+            <>
               {transactions.map((transaction, index) => {
                 const StatusIcon = statusIcons[transaction.status];
                 return (
@@ -285,10 +273,10 @@ export default function TransactionsTable({
                   </motion.tr>
                 );
               })}
-            </motion.tbody>
+            </>
           )}
         </AnimatePresence>
-      </motion.tbody>
+      </tbody>
     );
   }
 
