@@ -78,6 +78,7 @@ export default function Profile() {
               </button>
             </div>
           </div>
+          </div>
         </motion.div>
 
         {/* Profile Form */}
