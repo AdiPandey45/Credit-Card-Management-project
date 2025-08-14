@@ -265,7 +265,6 @@ export default function Transactions() {
     setSearchTerm('');
     setSelectedCategory('all');
     setDateRange('all');
-    setCurrentPage(1);
   };
 
   const hasActiveFilters = searchTerm || selectedCategory !== 'all' || dateRange !== 'all';
@@ -395,62 +394,15 @@ export default function Transactions() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden"
       >
-        <div className="px-4 sm:px-6 py-4 border-b border-slate-200 dark:border-slate-700">
-          <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
-            All Transactions
-          </h3>
-        </div>
-        
-        <div className="overflow-x-auto">
-          <table className="w-full table-fixed">
-            <thead className="bg-slate-50 dark:bg-slate-900/50">
-              <tr>
-                <th className="px-6 py-3 w-24 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                  Date
-                </th>
-                <th className="px-6 py-3 min-w-0 flex-1 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                  Description
-                </th>
-                <th className="px-6 py-3 w-32 text-center text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider hidden lg:table-cell">
-                  Category
-                </th>
-                <th className="px-6 py-3 w-28 text-right text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                  Amount
-                </th>
-                <th className="px-6 py-3 w-20 text-center text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider hidden sm:table-cell">
-                  Status
-                </th>
-              </tr>
-            </thead>
-            <AnimatePresence mode="wait">
-              <motion.tbody
-                key={`page-${currentPage}`}
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                transition={{ duration: 0.3, ease: "easeInOut" }}
-                className="divide-y divide-slate-200 dark:divide-slate-700"
-              >
-                <TransactionsTable
-                  transactions={getCurrentTransactions()}
-                  onPageChange={handlePageChange}
-                  totalPages={totalPages}
-                  currentPage={currentPage}
-                  loading={isLoading}
-                  hideHeader={true}
-                />
-              </motion.tbody>
-            </AnimatePresence>
-          </table>
-        </div>
-        
-        <PaginationControls
-          currentPage={currentPage}
-          totalPages={totalPages}
+        <TransactionsTable
+          transactions={getCurrentTransactions()}
           onPageChange={handlePageChange}
+          totalPages={totalPages}
+          currentPage={currentPage}
           loading={isLoading}
+          onClearFilters={clearFilters}
+          hasActiveFilters={hasActiveFilters}
         />
       </motion.div>
     </div>
