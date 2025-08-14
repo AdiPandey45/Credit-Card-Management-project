@@ -121,21 +121,6 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
         )}
       </AnimatePresence>
 
-      {/* Desktop Collapsed Sidebar Indicator */}
-      <AnimatePresence>
-        {collapsed && (
-          <motion.button
-            initial={{ x: -48 }}
-            animate={{ x: 0 }}
-            exit={{ x: -48 }}
-            transition={{ duration: 0.3, ease: 'easeInOut' }}
-            onClick={onToggle}
-            className="hidden lg:flex fixed top-4 left-4 z-40 w-10 h-10 items-center justify-center rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
-          >
-            <ChevronRightIcon className="w-5 h-5 text-slate-600 dark:text-slate-400" />
-          </motion.button>
-        )}
-      </AnimatePresence>
     </>
   );
 }
