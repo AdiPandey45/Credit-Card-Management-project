@@ -4,8 +4,8 @@ import { Menu, Transition } from '@headlessui/react';
 import { motion } from 'framer-motion';
 import clsx from 'clsx';
 import {
-  Bars3Icon,
-  XMarkIcon,
+  ChevronRightIcon,
+  ChevronLeftIcon,
   SunIcon,
   MoonIcon,
   UserIcon,
@@ -32,12 +32,12 @@ export default function TopNav({ onMenuClick, collapsed }: TopNavProps) {
       <div className="flex items-center space-x-4">
         <button
           onClick={onMenuClick}
-          className="p-2 rounded text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+          className="p-2 rounded text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200"
         >
           {collapsed ? (
-            <Bars3Icon className="h-5 w-5" />
+            <ChevronRightIcon className="h-5 w-5" />
           ) : (
-            <XMarkIcon className="h-5 w-5" />
+            <ChevronLeftIcon className="h-5 w-5" />
           )}
         </button>
         
