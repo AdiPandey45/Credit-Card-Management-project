@@ -10,8 +10,6 @@ import {
   UserIcon,
   Cog6ToothIcon,
   ChartBarIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
 } from '@heroicons/react/24/outline';
 
 const navigation = [
@@ -32,11 +30,17 @@ interface SidebarProps {
 export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
   const location = useLocation();
 
+  // On small/medium screens, collapsed means hidden
+  // On large screens, collapsed means icons-only
+  const isLargeScreen = typeof window !== 'undefined' && window.innerWidth >= 1024;
+  const showIconsOnly = isLargeScreen && collapsed;
+  const isHidden = !isLargeScreen && collapsed;
+
   return (
     <>
-      {/* Mobile/Tablet Backdrop */}
+      {/* Mobile/Tablet Backdrop - only show when sidebar is expanded on small screens */}
       <AnimatePresence>
-        {!collapsed && (
+        {!isLargeScreen && !collapsed && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -48,79 +52,117 @@ export default function Sidebar({ collapsed, onToggle }: SidebarProps) {
         )}
       </AnimatePresence>
 
-      {/* Sidebar Overlay */}
+      {/* Sidebar */}
       <AnimatePresence>
-        {!collapsed && (
+        {!isHidden && (
           <motion.div
-            initial={{ x: -256 }}
-            animate={{ x: 0 }}
-            exit={{ x: -256 }}
+            initial={{ 
+              x: isLargeScreen ? (showIconsOnly ? -192 : -256) : -256,
+              width: showIconsOnly ? 64 : 256
+            }}
+            animate={{ 
+              x: 0,
+              width: showIconsOnly ? 64 : 256
+            }}
+            exit={{ 
+              x: isLargeScreen ? (showIconsOnly ? -192 : -256) : -256
+            }}
             transition={{ duration: 0.3, ease: 'easeInOut' }}
-            className="fixed top-0 left-0 z-50 h-full w-64 bg-white dark:bg-neutral-900 border-r border-neutral-200 dark:border-neutral-700 shadow-xl"
+            className={clsx(
+              'fixed top-0 left-0 z-50 h-full bg-white dark:bg-neutral-900 border-r border-neutral-200 dark:border-neutral-700 shadow-xl',
+              showIconsOnly ? 'w-16' : 'w-64'
+            )}
           >
             <div className="flex h-full flex-col">
               {/* Logo */}
-              <div className="flex h-16 items-center justify-between px-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">
-                <div className="flex items-center space-x-2">
+              <div className={clsx(
+                'flex h-16 items-center border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800',
+                showIconsOnly ? 'justify-center px-2' : 'justify-between px-4'
+              )}>
+                {showIconsOnly ? (
                   <div className="flex h-8 w-8 items-center justify-center rounded bg-primary-600">
                     <CreditCardIcon className="h-5 w-5 text-white" />
                   </div>
-                  <span className="text-lg font-semibold text-neutral-900 dark:text-white">
-                    CreditFlow
-                  </span>
-                </div>
-                
-                {/* Close Button */}
-                <button
-                  onClick={onToggle}
-                  className="p-1.5 rounded hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
-                >
-                  <ChevronLeftIcon className="w-4 h-4 text-slate-600 dark:text-slate-400" />
-                </button>
+                ) : (
+                  <>
+                    <div className="flex items-center space-x-2">
+                      <div className="flex h-8 w-8 items-center justify-center rounded bg-primary-600">
+                        <CreditCardIcon className="h-5 w-5 text-white" />
+                      </div>
+                      <span className="text-lg font-semibold text-neutral-900 dark:text-white">
+                        CreditFlow
+                      </span>
+                    </div>
+                  </>
+                )}
               </div>
 
               {/* Navigation */}
-              <nav className="flex-1 space-y-1 p-3">
+              <nav className={clsx(
+                'flex-1 space-y-1',
+                showIconsOnly ? 'p-2' : 'p-3'
+              )}>
                 {navigation.map((item) => {
                   const isActive = location.pathname === item.href;
                   return (
-                    <div key={item.name} className="relative">
+                    <div key={item.name} className="relative group">
                       <NavLink
                         to={item.href}
-                        onClick={onToggle} // Close sidebar on navigation
+                        onClick={() => {
+                          // Only close sidebar on small screens
+                          if (!isLargeScreen) {
+                            onToggle();
+                          }
+                        }}
                         className={clsx(
-                          'group flex items-center rounded-md px-3 py-2 text-sm font-medium transition-all duration-150 relative',
+                          'group flex items-center rounded-md text-sm font-medium transition-all duration-150 relative',
+                          showIconsOnly ? 'p-2 justify-center' : 'px-3 py-2',
                           isActive
-                            ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-300 border-r-2 border-primary-600'
+                            ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-300'
                             : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800'
                         )}
                       >
                         <item.icon
                           className={clsx(
-                            'h-5 w-5 flex-shrink-0 transition-colors mr-3',
+                            'h-5 w-5 flex-shrink-0 transition-colors',
+                            showIconsOnly ? '' : 'mr-3',
                             isActive
                               ? 'text-primary-600 dark:text-primary-400'
                               : 'text-neutral-500 dark:text-neutral-400 group-hover:text-neutral-700 dark:group-hover:text-neutral-300'
                           )}
                         />
-                        <span>{item.name}</span>
+                        {!showIconsOnly && <span>{item.name}</span>}
+                        
+                        {/* Active indicator for collapsed mode */}
+                        {showIconsOnly && isActive && (
+                          <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-primary-600 rounded-l" />
+                        )}
                       </NavLink>
+                      
+                      {/* Tooltip for collapsed mode */}
+                      {showIconsOnly && (
+                        <div className="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2 py-1 bg-gray-900 dark:bg-gray-700 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50">
+                          {item.name}
+                          <div className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-gray-900 dark:border-r-gray-700" />
+                        </div>
+                      )}
                     </div>
                   );
                 })}
               </nav>
               
               {/* Footer */}
-              <div className="p-3 border-t border-neutral-200 dark:border-neutral-700">
-                <div className="text-xs text-neutral-500 dark:text-neutral-400 text-center">
-                  © 2024 CreditFlow
+              {!showIconsOnly && (
+                <div className="p-3 border-t border-neutral-200 dark:border-neutral-700">
+                  <div className="text-xs text-neutral-500 dark:text-neutral-400 text-center">
+                    © 2024 CreditFlow
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </motion.div>
         )}
       </AnimatePresence>
-
     </>
   );
 }

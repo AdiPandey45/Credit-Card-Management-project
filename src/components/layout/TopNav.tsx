@@ -25,6 +25,9 @@ export default function TopNav({ onMenuClick, collapsed }: TopNavProps) {
   const { theme, toggleTheme } = useTheme();
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  
+  // Determine if we're on a large screen
+  const isLargeScreen = typeof window !== 'undefined' && window.innerWidth >= 1024;
 
   return (
     <div className="flex h-16 items-center justify-between">
@@ -33,12 +36,23 @@ export default function TopNav({ onMenuClick, collapsed }: TopNavProps) {
         <button
           onClick={onMenuClick}
           className="p-2 rounded text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200"
+          title={isLargeScreen 
+            ? (collapsed ? 'Expand sidebar' : 'Collapse sidebar')
+            : (collapsed ? 'Open menu' : 'Close menu')
+          }
         >
-          {collapsed ? (
+          {isLargeScreen ? (
+            collapsed ? (
+              <ChevronRightIcon className="h-5 w-5" />
+            ) : (
+              <ChevronLeftIcon className="h-5 w-5" />
+            )
+          ) : (
+            collapsed ? (
             <ChevronRightIcon className="h-5 w-5" />
           ) : (
             <ChevronLeftIcon className="h-5 w-5" />
-          )}
+          ))}
         </button>
         
         <div className="hidden sm:block">

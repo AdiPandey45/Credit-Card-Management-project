@@ -12,10 +12,17 @@ interface LayoutProps {
 export default function Layout({ children }: LayoutProps) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
     if (typeof window !== 'undefined') {
+      // Check if it's a large screen
+      const isLargeScreen = window.innerWidth >= 1024;
       const saved = localStorage.getItem('sidebar-collapsed');
-      return saved === 'true';
+      
+      // Default to collapsed on large screens, expanded on smaller screens
+      if (saved !== null) {
+        return saved === 'true';
+      }
+      return isLargeScreen;
     }
-    return false;
+    return true; // Default collapsed for SSR
   });
   const { theme } = useTheme();
 
