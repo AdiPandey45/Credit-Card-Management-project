@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import StatCard from '../components/ui/StatCard';
 import TransactionsTable from '../components/tables/TransactionsTable';
