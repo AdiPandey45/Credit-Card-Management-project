@@ -118,13 +118,13 @@ export default function ApplyCardForm({ onSubmit }: ApplyCardFormProps) {
               type="text"
               placeholder="Enter your full name"
               className={clsx(
-                'w-full px-4 py-2 sm:py-3 rounded-xl border transition-all duration-200',
-                'bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm',
+                'w-full px-4 py-2 sm:py-3 rounded border transition-all duration-200',
+                'bg-white dark:bg-gray-900',
                 'placeholder-gray-400 dark:placeholder-gray-500',
                 'text-gray-900 dark:text-white',
                 errors.fullName
-                  ? 'border-red-300 dark:border-red-600 focus:border-red-500 focus:ring-red-500'
-                  : 'border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500'
+                  ? 'border-red-300 dark:border-red-600 focus:border-red-500 focus:ring-2 focus:ring-red-500'
+                  : 'border-gray-300 dark:border-gray-600 focus:border-primary-500 focus:ring-2 focus:ring-primary-500'
               )}
             />
             {errors.fullName && (
@@ -145,13 +145,13 @@ export default function ApplyCardForm({ onSubmit }: ApplyCardFormProps) {
               type="email"
               placeholder="Enter your email address"
               className={clsx(
-                'w-full px-4 py-3 rounded-xl border transition-all duration-200',
-                'bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm',
+                'w-full px-4 py-3 rounded border transition-all duration-200',
+                'bg-white dark:bg-gray-900',
                 'placeholder-gray-400 dark:placeholder-gray-500',
                 'text-gray-900 dark:text-white',
                 errors.email
-                  ? 'border-red-300 dark:border-red-600 focus:border-red-500 focus:ring-red-500'
-                  : 'border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500'
+                  ? 'border-red-300 dark:border-red-600 focus:border-red-500 focus:ring-2 focus:ring-red-500'
+                  : 'border-gray-300 dark:border-gray-600 focus:border-primary-500 focus:ring-2 focus:ring-primary-500'
               )}
             />
             {errors.email && (
@@ -178,13 +178,13 @@ export default function ApplyCardForm({ onSubmit }: ApplyCardFormProps) {
                   onChange={(e) => onChange(formatPAN(e.target.value))}
                   placeholder="ABCDE1234F"
                   className={clsx(
-                    'w-full px-4 py-3 rounded-xl border transition-all duration-200',
-                    'bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm',
+                    'w-full px-4 py-3 rounded border transition-all duration-200',
+                    'bg-white dark:bg-gray-900',
                     'placeholder-gray-400 dark:placeholder-gray-500',
                     'text-gray-900 dark:text-white font-mono',
                     errors.pan
-                      ? 'border-red-300 dark:border-red-600 focus:border-red-500 focus:ring-red-500'
-                      : 'border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500'
+                      ? 'border-red-300 dark:border-red-600 focus:border-red-500 focus:ring-2 focus:ring-red-500'
+                      : 'border-gray-300 dark:border-gray-600 focus:border-primary-500 focus:ring-2 focus:ring-primary-500'
                   )}
                 />
               )}
@@ -210,13 +210,13 @@ export default function ApplyCardForm({ onSubmit }: ApplyCardFormProps) {
               type="number"
               placeholder="500000"
               className={clsx(
-                'w-full px-4 py-3 rounded-xl border transition-all duration-200',
-                'bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm',
+                'w-full px-4 py-3 rounded border transition-all duration-200',
+                'bg-white dark:bg-gray-900',
                 'placeholder-gray-400 dark:placeholder-gray-500',
                 'text-gray-900 dark:text-white',
                 errors.income
-                  ? 'border-red-300 dark:border-red-600 focus:border-red-500 focus:ring-red-500'
-                  : 'border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-indigo-500'
+                  ? 'border-red-300 dark:border-red-600 focus:border-red-500 focus:ring-2 focus:ring-red-500'
+                  : 'border-gray-300 dark:border-gray-600 focus:border-primary-500 focus:ring-2 focus:ring-primary-500'
               )}
             />
             {errors.income && (
@@ -237,13 +237,13 @@ export default function ApplyCardForm({ onSubmit }: ApplyCardFormProps) {
               type="file"
               accept=".jpg,.jpeg,.png,.pdf"
               className={clsx(
-                'w-full px-4 py-3 rounded-xl border transition-all duration-200',
-                'bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm',
+                'w-full px-4 py-3 rounded border transition-all duration-200',
+                'bg-white dark:bg-gray-900',
                 'text-gray-900 dark:text-white',
-                'file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0',
-                'file:text-sm file:font-medium file:bg-indigo-50 file:text-indigo-700',
-                'dark:file:bg-indigo-900/50 dark:file:text-indigo-400',
-                'hover:file:bg-indigo-100 dark:hover:file:bg-indigo-900',
+                'file:mr-4 file:py-2 file:px-4 file:rounded file:border-0',
+                'file:text-sm file:font-medium file:bg-primary-50 file:text-primary-700',
+                'dark:file:bg-primary-900 dark:file:text-primary-400',
+                'hover:file:bg-primary-100 dark:hover:file:bg-primary-800',
                 errors.document
                   ? 'border-red-300 dark:border-red-600'
                   : 'border-gray-300 dark:border-gray-600'
@@ -274,11 +274,11 @@ export default function ApplyCardForm({ onSubmit }: ApplyCardFormProps) {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   className={clsx(
-                    'block p-4 rounded-xl border-2 cursor-pointer transition-all duration-200',
-                    'bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm',
+                    'block p-4 rounded border-2 cursor-pointer transition-all duration-200',
+                    'bg-white dark:bg-gray-900',
                     selectedProduct === product
-                      ? 'border-indigo-500 ring-2 ring-indigo-200 dark:ring-indigo-800'
-                      : 'border-gray-300 dark:border-gray-600 hover:border-indigo-300 dark:hover:border-indigo-700'
+                      ? 'border-primary-500 ring-2 ring-primary-200 dark:ring-primary-800'
+                      : 'border-gray-300 dark:border-gray-600 hover:border-primary-300 dark:hover:border-primary-700'
                   )}
                 >
                   <input
@@ -294,7 +294,7 @@ export default function ApplyCardForm({ onSubmit }: ApplyCardFormProps) {
                     <div className={clsx(
                       'w-4 h-4 rounded-full border-2 transition-all duration-200',
                       selectedProduct === product
-                        ? 'border-indigo-500 bg-indigo-500'
+                        ? 'border-primary-500 bg-primary-500'
                         : 'border-gray-300 dark:border-gray-600'
                     )}>
                       {selectedProduct === product && (
@@ -305,7 +305,7 @@ export default function ApplyCardForm({ onSubmit }: ApplyCardFormProps) {
                   <ul className="space-y-1 text-sm text-gray-600 dark:text-gray-400">
                     {productFeatures[product].map((feature, index) => (
                       <li key={index} className="flex items-center">
-                        <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full mr-2" />
+                        <span className="w-1.5 h-1.5 bg-primary-500 rounded-full mr-2" />
                         {feature}
                       </li>
                     ))}
@@ -327,7 +327,7 @@ export default function ApplyCardForm({ onSubmit }: ApplyCardFormProps) {
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           type="button"
-          className="flex-1 px-6 py-3 rounded-xl border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+          className="flex-1 px-6 py-3 rounded border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
         >
           Save & Continue Later
         </motion.button>
@@ -336,7 +336,7 @@ export default function ApplyCardForm({ onSubmit }: ApplyCardFormProps) {
           whileTap={{ scale: 0.98 }}
           type="submit"
           disabled={isSubmitting}
-          className="flex-1 px-6 py-3 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg transition-all duration-200"
+          className="flex-1 px-6 py-3 rounded bg-primary-600 hover:bg-primary-700 text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg transition-all duration-200"
         >
           {isSubmitting ? 'Processing...' : 'Submit Application'}
         </motion.button>

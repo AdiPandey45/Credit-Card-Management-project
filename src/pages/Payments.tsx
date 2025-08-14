@@ -52,21 +52,21 @@ export default function Payments() {
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 placeholder="0.00"
-                className="w-full pl-8 pr-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 dark:text-white text-base sm:text-lg"
+                className="w-full pl-8 pr-4 py-3 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-900 dark:text-white text-base sm:text-lg"
               />
             </div>
             <div className="flex flex-col sm:flex-row gap-2 mt-2">
               <button
                 type="button"
                 onClick={() => setAmount('45320')}
-                className="px-3 py-1 text-xs sm:text-sm bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 rounded-md hover:bg-indigo-200 dark:hover:bg-indigo-900 transition-colors"
+                className="px-3 py-1 text-xs sm:text-sm bg-primary-50 dark:bg-primary-900 text-primary-700 dark:text-primary-300 rounded hover:bg-primary-100 dark:hover:bg-primary-800 transition-colors"
               >
                 Full Amount
               </button>
               <button
                 type="button"
                 onClick={() => setAmount('2266')}
-                className="px-3 py-1 text-xs sm:text-sm bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                className="px-3 py-1 text-xs sm:text-sm bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
               >
                 Minimum (₹2,266)
               </button>
@@ -89,10 +89,10 @@ export default function Payments() {
                 />
                 <div className={`p-4 rounded-xl border-2 transition-all ${
                   paymentMethod === 'bank'
-                    ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/30'
+                    ? 'border-primary-500 bg-primary-50 dark:bg-primary-900'
                     : 'border-gray-300 dark:border-gray-600'
                 }`}>
-                  <BanknotesIcon className="w-8 h-8 text-indigo-600 dark:text-indigo-400 mb-2" />
+                  <BanknotesIcon className="w-8 h-8 text-primary-600 dark:text-primary-400 mb-2" />
                   <p className="font-medium text-gray-900 dark:text-white">Bank Account</p>
                   <p className="text-sm text-gray-500 dark:text-gray-400">Direct debit</p>
                 </div>
@@ -109,10 +109,10 @@ export default function Payments() {
                 />
                 <div className={`p-4 rounded-xl border-2 transition-all ${
                   paymentMethod === 'card'
-                    ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/30'
+                    ? 'border-primary-500 bg-primary-50 dark:bg-primary-900'
                     : 'border-gray-300 dark:border-gray-600'
                 }`}>
-                  <CreditCardIcon className="w-8 h-8 text-indigo-600 dark:text-indigo-400 mb-2" />
+                  <CreditCardIcon className="w-8 h-8 text-primary-600 dark:text-primary-400 mb-2" />
                   <p className="font-medium text-gray-900 dark:text-white">Debit Card</p>
                   <p className="text-sm text-gray-500 dark:text-gray-400">Instant payment</p>
                 </div>
@@ -124,7 +124,7 @@ export default function Payments() {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             type="submit"
-            className="w-full px-6 py-3 sm:py-4 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-medium rounded-xl hover:shadow-lg transition-all duration-200 text-base sm:text-lg"
+            className="w-full px-6 py-3 sm:py-4 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded hover:shadow-lg transition-all duration-200 text-base sm:text-lg"
           >
             Make Payment
           </motion.button>
