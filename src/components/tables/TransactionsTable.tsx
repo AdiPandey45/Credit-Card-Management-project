@@ -28,13 +28,13 @@ interface TransactionsTableProps {
 }
 
 const categoryColors: Record<string, string> = {
-  'Food & Dining': 'bg-orange-100 text-orange-800 dark:bg-orange-900/50 dark:text-orange-300',
-  'Shopping': 'bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-300',
-  'Transport': 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300',
-  'Entertainment': 'bg-pink-100 text-pink-800 dark:bg-pink-900/50 dark:text-pink-300',
-  'Bills': 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300',
-  'Healthcare': 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300',
-  'Others': 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300',
+  'Food & Dining': 'bg-orange-500 text-white',
+  'Shopping': 'bg-purple-500 text-white',
+  'Transport': 'bg-blue-500 text-white',
+  'Entertainment': 'bg-pink-500 text-white',
+  'Bills': 'bg-red-500 text-white',
+  'Healthcare': 'bg-green-500 text-white',
+  'Others': 'bg-slate-500 text-white',
 };
 
 const statusIcons = {
@@ -51,21 +51,21 @@ const statusColors = {
 
 function SkeletonRow() {
   return (
-    <tr className="animate-pulse border-b border-slate-200 dark:border-slate-700">
-      <td className="px-4 sm:px-6 py-4 w-[100px]">
+    <tr className="animate-pulse border-b border-slate-200 dark:border-slate-700 h-16">
+      <td className="px-6 py-4 w-24">
         <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-20"></div>
       </td>
-      <td className="px-4 sm:px-6 py-4 min-w-[200px]">
+      <td className="px-6 py-4 min-w-0 flex-1">
         <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-40"></div>
       </td>
-      <td className="px-4 sm:px-6 py-4 w-[140px] hidden sm:table-cell">
-        <div className="h-6 bg-slate-200 dark:bg-slate-700 rounded-full w-24"></div>
+      <td className="px-6 py-4 w-32 hidden lg:table-cell">
+        <div className="h-6 bg-slate-200 dark:bg-slate-700 rounded w-24 mx-auto"></div>
       </td>
-      <td className="px-4 sm:px-6 py-4 w-[120px]">
-        <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-16"></div>
+      <td className="px-6 py-4 w-28">
+        <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-16 ml-auto"></div>
       </td>
-      <td className="px-4 sm:px-6 py-4 w-[80px] hidden sm:table-cell">
-        <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-12"></div>
+      <td className="px-6 py-4 w-20 hidden sm:table-cell">
+        <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-4 mx-auto"></div>
       </td>
     </tr>
   );
@@ -92,6 +92,99 @@ function EmptyState() {
   );
 }
 
+function PaginationControls({ 
+  currentPage, 
+  totalPages, 
+  onPageChange, 
+  loading 
+}: {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+  loading: boolean;
+}) {
+  const getVisiblePages = () => {
+    const delta = 2;
+    const range = [];
+    const rangeWithDots = [];
+
+    for (let i = Math.max(2, currentPage - delta); i <= Math.min(totalPages - 1, currentPage + delta); i++) {
+      range.push(i);
+    }
+
+    if (currentPage - delta > 2) {
+      rangeWithDots.push(1, '...');
+    } else {
+      rangeWithDots.push(1);
+    }
+
+    rangeWithDots.push(...range);
+
+    if (currentPage + delta < totalPages - 1) {
+      rangeWithDots.push('...', totalPages);
+    } else {
+      rangeWithDots.push(totalPages);
+    }
+
+    return rangeWithDots;
+  };
+
+  if (totalPages <= 1) return null;
+
+  return (
+    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-6 py-4 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50">
+      <div className="text-sm text-slate-700 dark:text-slate-300">
+        Page {currentPage} of {totalPages}
+      </div>
+      <div className="flex items-center space-x-1">
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => onPageChange(currentPage - 1)}
+          disabled={currentPage <= 1 || loading}
+          className="p-2 rounded border border-slate-300 dark:border-slate-600 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+        >
+          <ChevronLeftIcon className="w-4 h-4" />
+        </motion.button>
+        
+        {getVisiblePages().map((pageNum, index) => (
+          pageNum === '...' ? (
+            <span key={`dots-${index}`} className="px-3 py-2 text-slate-500">
+              ...
+            </span>
+          ) : (
+            <motion.button
+              key={pageNum}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => onPageChange(pageNum as number)}
+              disabled={loading}
+              className={clsx(
+                'px-3 py-2 rounded text-sm font-medium transition-colors min-w-[40px]',
+                pageNum === currentPage
+                  ? 'bg-primary-600 text-white'
+                  : 'border border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300'
+              )}
+            >
+              {pageNum}
+            </motion.button>
+          )
+        ))}
+        
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => onPageChange(currentPage + 1)}
+          disabled={currentPage >= totalPages || loading}
+          className="p-2 rounded border border-slate-300 dark:border-slate-600 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+        >
+          <ChevronRightIcon className="w-4 h-4" />
+        </motion.button>
+      </div>
+    </div>
+  );
+}
+
 export default function TransactionsTable({ 
   transactions, 
   onPageChange, 
@@ -112,126 +205,100 @@ export default function TransactionsTable({
   if (hideHeader) {
     return (
       <>
-        <AnimatePresence mode="popLayout">
+        <AnimatePresence mode="wait">
           {loading ? (
-            Array.from({ length: 8 }, (_, i) => <SkeletonRow key={`skeleton-${i}`} />)
+            <motion.tbody
+              key="loading"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+            >
+              {Array.from({ length: 5 }, (_, i) => <SkeletonRow key={`skeleton-${i}`} />)}
+            </motion.tbody>
           ) : (
-            transactions.map((transaction, index) => {
-              const StatusIcon = statusIcons[transaction.status];
-              return (
-                <motion.tr
-                  key={transaction.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ delay: index * 0.03, duration: 0.2 }}
-                  className="transition-colors duration-200 hover:bg-slate-50 dark:hover:bg-slate-700/50 border-b border-slate-200 dark:border-slate-700"
-                >
-                  <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-slate-900 dark:text-white w-[100px]">
-                    {new Date(transaction.date).toLocaleDateString('en-IN', {
-                      day: 'numeric',
-                      month: 'short',
-                    })}
-                  </td>
-                  <td className="px-4 sm:px-6 py-4 min-w-[200px]">
-                    <div className="text-sm font-medium text-slate-900 dark:text-white">
-                      {transaction.description}
-                    </div>
-                    <div className="text-xs text-slate-500 dark:text-slate-400 sm:hidden">
-                      {transaction.category}
-                    </div>
-                  </td>
-                  <td className="px-4 sm:px-6 py-4 w-[140px] hidden sm:table-cell">
-                    <span className={clsx(
-                      'inline-flex px-2 py-1 text-xs font-medium rounded-full',
-                      categoryColors[transaction.category] || categoryColors['Others']
-                    )}>
-                      {transaction.category}
-                    </span>
-                  </td>
-                  <td className="px-4 sm:px-6 py-4 text-right w-[120px]">
-                    <span className={clsx(
-                      'text-sm font-medium',
-                      transaction.amount < 0 
-                        ? 'text-red-600 dark:text-red-400' 
-                        : 'text-green-600 dark:text-green-400'
-                    )}>
-                      {transaction.amount < 0 ? '-' : '+'}₹{Math.abs(transaction.amount).toLocaleString()}
-                    </span>
-                    <div className="flex items-center justify-end mt-1 sm:hidden">
-                      <StatusIcon 
-                        className={clsx('w-4 h-4', statusColors[transaction.status])} 
-                      />
-                    </div>
-                  </td>
-                  <td className="px-4 sm:px-6 py-4 text-center w-[80px] hidden sm:table-cell">
-                    <div className="flex items-center justify-center">
-                      <StatusIcon 
-                        className={clsx('w-5 h-5', statusColors[transaction.status])} 
-                      />
-                    </div>
-                  </td>
-                </motion.tr>
-              );
-            })
+            <motion.tbody
+              key={`page-${currentPage}`}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+            >
+              {transactions.map((transaction, index) => {
+                const StatusIcon = statusIcons[transaction.status];
+                return (
+                  <motion.tr
+                    key={transaction.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.05, duration: 0.2 }}
+                    className="h-16 transition-colors duration-200 hover:bg-slate-50 dark:hover:bg-slate-700/50 border-b border-slate-200 dark:border-slate-700"
+                  >
+                    <td className="px-6 py-4 w-24 text-left align-middle">
+                      <div className="text-sm font-medium text-slate-900 dark:text-white whitespace-nowrap">
+                        {new Date(transaction.date).toLocaleDateString('en-IN', {
+                          day: 'numeric',
+                          month: 'short',
+                        })}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 min-w-0 flex-1 align-middle">
+                      <div className="text-sm font-medium text-slate-900 dark:text-white truncate" title={transaction.description}>
+                        {transaction.description}
+                      </div>
+                      <div className="text-xs text-slate-500 dark:text-slate-400 lg:hidden mt-1">
+                        {transaction.category}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 w-32 hidden lg:table-cell align-middle">
+                      <div className="flex justify-center">
+                        <span className={clsx(
+                          'inline-flex items-center px-2.5 py-1 text-xs font-medium rounded h-6',
+                          categoryColors[transaction.category] || categoryColors['Others']
+                        )}>
+                          {transaction.category}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 w-28 text-right align-middle">
+                      <div className={clsx(
+                        'text-sm font-semibold tabular-nums',
+                        transaction.amount < 0 
+                          ? 'text-red-600 dark:text-red-400' 
+                          : 'text-green-600 dark:text-green-400'
+                      )}>
+                        {transaction.amount < 0 ? '-' : '+'}₹{Math.abs(transaction.amount).toLocaleString()}
+                      </div>
+                      <div className="flex items-center justify-end mt-1 sm:hidden">
+                        <StatusIcon 
+                          className={clsx('w-4 h-4', statusColors[transaction.status])} 
+                        />
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 w-20 hidden sm:table-cell align-middle">
+                      <div className="flex items-center justify-center">
+                        <StatusIcon 
+                          className={clsx('w-5 h-5', statusColors[transaction.status])} 
+                        />
+                      </div>
+                    </td>
+                  </motion.tr>
+                );
+              })}
+            </motion.tbody>
           )}
         </AnimatePresence>
         
-        {/* Pagination for embedded table */}
-        {totalPages > 1 && (
-          <tr>
-            <td colSpan={5} className="px-4 sm:px-6 py-4 border-t border-slate-200 dark:border-slate-700">
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-                <div className="text-sm text-slate-700 dark:text-slate-300">
-                  Page {currentPage} of {totalPages}
-                </div>
-                <div className="flex items-center space-x-2">
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => onPageChange(currentPage - 1)}
-                    disabled={currentPage <= 1 || loading}
-                    className="p-2 rounded border border-slate-300 dark:border-slate-600 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
-                  >
-                    <ChevronLeftIcon className="w-4 h-4" />
-                  </motion.button>
-                  
-                  {/* Page numbers */}
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
-                    <motion.button
-                      key={pageNum}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => onPageChange(pageNum)}
-                      disabled={loading}
-                      className={clsx(
-                        'px-3 py-2 rounded text-sm font-medium transition-colors',
-                        pageNum === currentPage
-                          ? 'bg-primary-600 text-white'
-                          : 'border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300'
-                      )}
-                    >
-                      {pageNum}
-                    </motion.button>
-                  ))}
-                  
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => onPageChange(currentPage + 1)}
-                    disabled={currentPage >= totalPages || loading}
-                    className="p-2 rounded border border-slate-300 dark:border-slate-600 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
-                  >
-                    <ChevronRightIcon className="w-4 h-4" />
-                  </motion.button>
-                </div>
-              </div>
-            </td>
-          </tr>
-        )}
+        <PaginationControls
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={onPageChange}
+          loading={loading}
+        />
       </>
     );
   }
+
   return (
     <div className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
       {!hideHeader && (
@@ -243,119 +310,120 @@ export default function TransactionsTable({
       )}
       
       <div className="overflow-x-auto">
-        <table className="w-full">
+        <table className="w-full table-fixed">
           <thead className="bg-slate-50 dark:bg-slate-900/50">
             <tr>
-              <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider w-[100px]">
+              <th className="px-6 py-3 w-24 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                 Date
               </th>
-              <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider min-w-[200px]">
+              <th className="px-6 py-3 min-w-0 flex-1 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                 Description
               </th>
-              <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider w-[140px] hidden sm:table-cell">
+              <th className="px-6 py-3 w-32 text-center text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider hidden lg:table-cell">
                 Category
               </th>
-              <th className="px-4 sm:px-6 py-3 text-right text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider w-[120px]">
+              <th className="px-6 py-3 w-28 text-right text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                 Amount
               </th>
-              <th className="px-4 sm:px-6 py-3 text-center text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider w-[80px] hidden sm:table-cell">
+              <th className="px-6 py-3 w-20 text-center text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider hidden sm:table-cell">
                 Status
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
-            <AnimatePresence mode="popLayout">
-              {loading ? (
-                Array.from({ length: 8 }, (_, i) => <SkeletonRow key={`skeleton-${i}`} />)
-              ) : (
-                transactions.map((transaction, index) => {
+          <AnimatePresence mode="wait">
+            {loading ? (
+              <motion.tbody
+                key="loading"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="divide-y divide-slate-200 dark:divide-slate-700"
+              >
+                {Array.from({ length: 5 }, (_, i) => <SkeletonRow key={`skeleton-${i}`} />)}
+              </motion.tbody>
+            ) : (
+              <motion.tbody
+                key={`page-${currentPage}`}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+                className="divide-y divide-slate-200 dark:divide-slate-700"
+              >
+                {transactions.map((transaction, index) => {
                   const StatusIcon = statusIcons[transaction.status];
                   return (
                     <motion.tr
                       key={transaction.id}
-                      initial={{ opacity: 0, y: 20 }}
+                      initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -20 }}
-                      transition={{ delay: index * 0.05 }}
-                      className="transition-colors duration-200 hover:bg-slate-50 dark:hover:bg-slate-700/50"
+                      transition={{ delay: index * 0.05, duration: 0.2 }}
+                      className="h-16 transition-colors duration-200 hover:bg-slate-50 dark:hover:bg-slate-700/50"
                     >
-                      <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-slate-900 dark:text-white w-[100px]">
-                        {new Date(transaction.date).toLocaleDateString('en-IN', {
-                          day: 'numeric',
-                          month: 'short',
-                        })}
+                      <td className="px-6 py-4 w-24 text-left align-middle">
+                        <div className="text-sm font-medium text-slate-900 dark:text-white whitespace-nowrap">
+                          {new Date(transaction.date).toLocaleDateString('en-IN', {
+                            day: 'numeric',
+                            month: 'short',
+                          })}
+                        </div>
                       </td>
-                      <td className="px-4 sm:px-6 py-4 min-w-[200px]">
-                        <div className="text-sm font-medium text-slate-900 dark:text-white">
+                      <td className="px-6 py-4 min-w-0 flex-1 align-middle">
+                        <div className="text-sm font-medium text-slate-900 dark:text-white truncate" title={transaction.description}>
                           {transaction.description}
                         </div>
-                        <div className="text-xs text-slate-500 dark:text-slate-400 sm:hidden">
+                        <div className="text-xs text-slate-500 dark:text-slate-400 lg:hidden mt-1">
                           {transaction.category}
                         </div>
                       </td>
-                      <td className="px-4 sm:px-6 py-4 w-[140px] hidden sm:table-cell">
-                        <span className={clsx(
-                          'inline-flex px-2 py-1 text-xs font-medium rounded-full',
-                          categoryColors[transaction.category] || categoryColors['Others']
-                        )}>
-                          {transaction.category}
-                        </span>
+                      <td className="px-6 py-4 w-32 hidden lg:table-cell align-middle">
+                        <div className="flex justify-center">
+                          <span className={clsx(
+                            'inline-flex items-center px-2.5 py-1 text-xs font-medium rounded h-6',
+                            categoryColors[transaction.category] || categoryColors['Others']
+                          )}>
+                            {transaction.category}
+                          </span>
+                        </div>
                       </td>
-                      <td className="px-4 sm:px-6 py-4 text-right w-[120px]">
-                        <span className={clsx(
-                          'text-sm font-medium',
+                      <td className="px-6 py-4 w-28 text-right align-middle">
+                        <div className={clsx(
+                          'text-sm font-semibold tabular-nums',
                           transaction.amount < 0 
                             ? 'text-red-600 dark:text-red-400' 
                             : 'text-green-600 dark:text-green-400'
                         )}>
                           {transaction.amount < 0 ? '-' : '+'}₹{Math.abs(transaction.amount).toLocaleString()}
-                        </span>
+                        </div>
                         <div className="flex items-center justify-end mt-1 sm:hidden">
                           <StatusIcon 
                             className={clsx('w-4 h-4', statusColors[transaction.status])} 
                           />
                         </div>
                       </td>
-                      <td className="px-4 sm:px-6 py-4 text-center w-[80px] hidden sm:table-cell">
+                      <td className="px-6 py-4 w-20 hidden sm:table-cell align-middle">
                         <div className="flex items-center justify-center">
                           <StatusIcon 
                             className={clsx('w-5 h-5', statusColors[transaction.status])} 
                           />
                         </div>
                       </td>
-                    </motion.tr>
+                    </tr>
                   );
-                })
-              )}
-            </AnimatePresence>
-          </tbody>
+                })}
+              </motion.tbody>
+            )}
+          </AnimatePresence>
         </table>
       </div>
 
-      {/* Pagination */}
-      {totalPages > 1 && (
-        <div className="px-4 sm:px-6 py-4 border-t border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="text-sm text-slate-700 dark:text-slate-300">
-            Page {currentPage} of {totalPages}
-          </div>
-          <div className="flex items-center space-x-2">
-            <button
-              onClick={() => onPageChange(currentPage - 1)}
-              disabled={currentPage <= 1 || loading}
-              className="p-2 rounded border border-slate-300 dark:border-slate-600 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
-            >
-              <ChevronLeftIcon className="w-4 h-4" />
-            </button>
-            <button
-              onClick={() => onPageChange(currentPage + 1)}
-              disabled={currentPage >= totalPages || loading}
-              className="p-2 rounded border border-slate-300 dark:border-slate-600 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
-            >
-              <ChevronRightIcon className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
-      )}
+      <PaginationControls
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={onPageChange}
+        loading={loading}
+      />
     </div>
   );
 }
