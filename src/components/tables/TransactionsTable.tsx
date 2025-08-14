@@ -51,20 +51,20 @@ const statusColors = {
 
 function SkeletonRow() {
   return (
-    <tr className="animate-pulse">
-      <td className="px-3 sm:px-6 py-4">
+    <tr className="animate-pulse border-b border-slate-200 dark:border-slate-700">
+      <td className="px-4 sm:px-6 py-4 w-[100px]">
         <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-20"></div>
       </td>
-      <td className="px-3 sm:px-6 py-4">
+      <td className="px-4 sm:px-6 py-4 min-w-[200px]">
         <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-40"></div>
       </td>
-      <td className="px-3 sm:px-6 py-4 hidden sm:table-cell">
+      <td className="px-4 sm:px-6 py-4 w-[140px] hidden sm:table-cell">
         <div className="h-6 bg-slate-200 dark:bg-slate-700 rounded-full w-24"></div>
       </td>
-      <td className="px-3 sm:px-6 py-4">
+      <td className="px-4 sm:px-6 py-4 w-[120px]">
         <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-16"></div>
       </td>
-      <td className="px-3 sm:px-6 py-4 hidden sm:table-cell">
+      <td className="px-4 sm:px-6 py-4 w-[80px] hidden sm:table-cell">
         <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-12"></div>
       </td>
     </tr>
@@ -114,7 +114,7 @@ export default function TransactionsTable({
       <>
         <AnimatePresence mode="popLayout">
           {loading ? (
-            Array.from({ length: 5 }, (_, i) => <SkeletonRow key={`skeleton-${i}`} />)
+            Array.from({ length: 8 }, (_, i) => <SkeletonRow key={`skeleton-${i}`} />)
           ) : (
             transactions.map((transaction, index) => {
               const StatusIcon = statusIcons[transaction.status];
@@ -125,16 +125,15 @@ export default function TransactionsTable({
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
                   transition={{ delay: index * 0.03, duration: 0.2 }}
-                  whileHover={{ backgroundColor: 'rgba(99, 102, 241, 0.05)' }}
-                  className="transition-colors duration-200 hover:bg-primary-50/50 dark:hover:bg-primary-900/20"
+                  className="transition-colors duration-200 hover:bg-slate-50 dark:hover:bg-slate-700/50 border-b border-slate-200 dark:border-slate-700"
                 >
-                  <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-sm text-slate-900 dark:text-white">
+                  <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-slate-900 dark:text-white w-[100px]">
                     {new Date(transaction.date).toLocaleDateString('en-IN', {
                       day: 'numeric',
                       month: 'short',
                     })}
                   </td>
-                  <td className="px-3 sm:px-6 py-4">
+                  <td className="px-4 sm:px-6 py-4 min-w-[200px]">
                     <div className="text-sm font-medium text-slate-900 dark:text-white">
                       {transaction.description}
                     </div>
@@ -142,7 +141,7 @@ export default function TransactionsTable({
                       {transaction.category}
                     </div>
                   </td>
-                  <td className="px-3 sm:px-6 py-4 hidden sm:table-cell">
+                  <td className="px-4 sm:px-6 py-4 w-[140px] hidden sm:table-cell">
                     <span className={clsx(
                       'inline-flex px-2 py-1 text-xs font-medium rounded-full',
                       categoryColors[transaction.category] || categoryColors['Others']
@@ -150,7 +149,7 @@ export default function TransactionsTable({
                       {transaction.category}
                     </span>
                   </td>
-                  <td className="px-3 sm:px-6 py-4 text-right">
+                  <td className="px-4 sm:px-6 py-4 text-right w-[120px]">
                     <span className={clsx(
                       'text-sm font-medium',
                       transaction.amount < 0 
@@ -165,7 +164,7 @@ export default function TransactionsTable({
                       />
                     </div>
                   </td>
-                  <td className="px-3 sm:px-6 py-4 text-center hidden sm:table-cell">
+                  <td className="px-4 sm:px-6 py-4 text-center w-[80px] hidden sm:table-cell">
                     <div className="flex items-center justify-center">
                       <StatusIcon 
                         className={clsx('w-5 h-5', statusColors[transaction.status])} 
@@ -244,22 +243,22 @@ export default function TransactionsTable({
       )}
       
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[500px] sm:min-w-[600px]">
+        <table className="w-full">
           <thead className="bg-slate-50 dark:bg-slate-900/50">
             <tr>
-              <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+              <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider w-[100px]">
                 Date
               </th>
-              <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+              <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider min-w-[200px]">
                 Description
               </th>
-              <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider hidden sm:table-cell">
+              <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider w-[140px] hidden sm:table-cell">
                 Category
               </th>
-              <th className="px-3 sm:px-6 py-3 text-right text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+              <th className="px-4 sm:px-6 py-3 text-right text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider w-[120px]">
                 Amount
               </th>
-              <th className="px-3 sm:px-6 py-3 text-center text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider hidden sm:table-cell">
+              <th className="px-4 sm:px-6 py-3 text-center text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider w-[80px] hidden sm:table-cell">
                 Status
               </th>
             </tr>
@@ -267,7 +266,7 @@ export default function TransactionsTable({
           <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
             <AnimatePresence mode="popLayout">
               {loading ? (
-                Array.from({ length: 5 }, (_, i) => <SkeletonRow key={`skeleton-${i}`} />)
+                Array.from({ length: 8 }, (_, i) => <SkeletonRow key={`skeleton-${i}`} />)
               ) : (
                 transactions.map((transaction, index) => {
                   const StatusIcon = statusIcons[transaction.status];
@@ -278,16 +277,15 @@ export default function TransactionsTable({
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -20 }}
                       transition={{ delay: index * 0.05 }}
-                      whileHover={{ backgroundColor: 'rgba(99, 102, 241, 0.05)' }}
-                      className="transition-colors duration-200 hover:bg-primary-50/50 dark:hover:bg-primary-900/20"
+                      className="transition-colors duration-200 hover:bg-slate-50 dark:hover:bg-slate-700/50"
                     >
-                      <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-sm text-slate-900 dark:text-white">
+                      <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-slate-900 dark:text-white w-[100px]">
                         {new Date(transaction.date).toLocaleDateString('en-IN', {
                           day: 'numeric',
                           month: 'short',
                         })}
                       </td>
-                      <td className="px-3 sm:px-6 py-4">
+                      <td className="px-4 sm:px-6 py-4 min-w-[200px]">
                         <div className="text-sm font-medium text-slate-900 dark:text-white">
                           {transaction.description}
                         </div>
@@ -295,7 +293,7 @@ export default function TransactionsTable({
                           {transaction.category}
                         </div>
                       </td>
-                      <td className="px-3 sm:px-6 py-4 hidden sm:table-cell">
+                      <td className="px-4 sm:px-6 py-4 w-[140px] hidden sm:table-cell">
                         <span className={clsx(
                           'inline-flex px-2 py-1 text-xs font-medium rounded-full',
                           categoryColors[transaction.category] || categoryColors['Others']
@@ -303,7 +301,7 @@ export default function TransactionsTable({
                           {transaction.category}
                         </span>
                       </td>
-                      <td className="px-3 sm:px-6 py-4 text-right">
+                      <td className="px-4 sm:px-6 py-4 text-right w-[120px]">
                         <span className={clsx(
                           'text-sm font-medium',
                           transaction.amount < 0 
@@ -318,7 +316,7 @@ export default function TransactionsTable({
                           />
                         </div>
                       </td>
-                      <td className="px-3 sm:px-6 py-4 text-center hidden sm:table-cell">
+                      <td className="px-4 sm:px-6 py-4 text-center w-[80px] hidden sm:table-cell">
                         <div className="flex items-center justify-center">
                           <StatusIcon 
                             className={clsx('w-5 h-5', statusColors[transaction.status])} 

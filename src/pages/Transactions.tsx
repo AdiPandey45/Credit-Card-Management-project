@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import TransactionsTable from '../components/tables/TransactionsTable';
 import { MagnifyingGlassIcon, FunnelIcon, CalendarDaysIcon } from '@heroicons/react/24/outline';
@@ -128,26 +128,129 @@ const allMockTransactions = [
     amount: -8500,
     status: 'completed' as const,
   },
+  // Additional transactions for better filtering
+  {
+    id: '16',
+    date: '2023-12-31',
+    description: 'Water Bill',
+    category: 'Bills',
+    amount: -800,
+    status: 'completed' as const,
+  },
+  {
+    id: '17',
+    date: '2023-12-30',
+    description: 'Myntra - Clothing',
+    category: 'Shopping',
+    amount: -4500,
+    status: 'completed' as const,
+  },
+  {
+    id: '18',
+    date: '2023-12-29',
+    description: 'Hospital Visit',
+    category: 'Healthcare',
+    amount: -8000,
+    status: 'completed' as const,
+  },
 ];
 
 export default function Transactions() {
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(() => {
+    const saved = sessionStorage.getItem('transactions-page');
+    return saved ? parseInt(saved) : 1;
+  });
   const [isLoading, setIsLoading] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const [dateRange, setDateRange] = useState('all');
+  const [searchTerm, setSearchTerm] = useState(() => {
+    return sessionStorage.getItem('transactions-search') || '';
+  });
+  const [selectedCategory, setSelectedCategory] = useState(() => {
+    return sessionStorage.getItem('transactions-category') || 'all';
+  });
+  const [dateRange, setDateRange] = useState(() => {
+    return sessionStorage.getItem('transactions-date-range') || 'all';
+  });
 
-  const transactionsPerPage = 5;
-  const totalPages = Math.ceil(allMockTransactions.length / transactionsPerPage);
+  const transactionsPerPage = 8;
+
+  // Filter transactions based on search and filters
+  const getFilteredTransactions = () => {
+    let filtered = allMockTransactions;
+
+    // Search filter
+    if (searchTerm) {
+      filtered = filtered.filter(transaction =>
+        transaction.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        transaction.category.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    // Category filter
+    if (selectedCategory !== 'all') {
+      filtered = filtered.filter(transaction => transaction.category === selectedCategory);
+    }
+
+    // Date range filter (simplified for demo)
+    if (dateRange !== 'all') {
+      const now = new Date();
+      const transactionDate = new Date(filtered[0]?.date || now);
+      
+      switch (dateRange) {
+        case 'today':
+          filtered = filtered.filter(t => {
+            const tDate = new Date(t.date);
+            return tDate.toDateString() === now.toDateString();
+          });
+          break;
+        case 'week':
+          const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+          filtered = filtered.filter(t => new Date(t.date) >= weekAgo);
+          break;
+        case 'month':
+          filtered = filtered.filter(t => {
+            const tDate = new Date(t.date);
+            return tDate.getMonth() === now.getMonth() && tDate.getFullYear() === now.getFullYear();
+          });
+          break;
+      }
+    }
+
+    return filtered;
+  };
+
+  const filteredTransactions = getFilteredTransactions();
+  const totalPages = Math.ceil(filteredTransactions.length / transactionsPerPage);
 
   const getCurrentTransactions = () => {
     const startIndex = (currentPage - 1) * transactionsPerPage;
     const endIndex = startIndex + transactionsPerPage;
-    return allMockTransactions.slice(startIndex, endIndex);
+    return filteredTransactions.slice(startIndex, endIndex);
   };
 
+  // Save filters to sessionStorage
+  useEffect(() => {
+    sessionStorage.setItem('transactions-search', searchTerm);
+  }, [searchTerm]);
+
+  useEffect(() => {
+    sessionStorage.setItem('transactions-category', selectedCategory);
+  }, [selectedCategory]);
+
+  useEffect(() => {
+    sessionStorage.setItem('transactions-date-range', dateRange);
+  }, [dateRange]);
+
+  useEffect(() => {
+    sessionStorage.setItem('transactions-page', currentPage.toString());
+  }, [currentPage]);
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, selectedCategory, dateRange]);
+
   const handlePageChange = async (page: number) => {
-    if (page === currentPage || isLoading) return;
+    if (page === currentPage || isLoading || page < 1 || page > totalPages) return;
     
     setIsLoading(true);
     
@@ -158,79 +261,131 @@ export default function Transactions() {
     setIsLoading(false);
   };
 
+  const clearFilters = () => {
+    setSearchTerm('');
+    setSelectedCategory('all');
+    setDateRange('all');
+    setCurrentPage(1);
+  };
+
+  const hasActiveFilters = searchTerm || selectedCategory !== 'all' || dateRange !== 'all';
+
   return (
-    <div className="space-y-6 sm:space-y-8 max-w-7xl mx-auto">
+    <div className="space-y-6 max-w-7xl mx-auto p-4 sm:p-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
+      >
         <div>
-          <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white">Transactions</h1>
-          <p className="text-slate-600 dark:text-slate-400 mt-2">
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">
+            Transactions
+          </h1>
+          <p className="text-slate-600 dark:text-slate-400 mt-1">
             View and manage your transaction history
           </p>
         </div>
         <motion.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          className="px-4 sm:px-6 py-3 bg-primary-600 text-white rounded hover:bg-primary-700 transition-colors flex items-center space-x-2 text-sm sm:text-base shadow-sm"
+          className="px-4 py-2 bg-primary-600 text-white rounded hover:bg-primary-700 transition-colors flex items-center space-x-2 text-sm shadow-sm"
         >
           <CalendarDaysIcon className="w-4 h-4" />
           <span>Export CSV</span>
         </motion.button>
-      </div>
+      </motion.div>
 
       {/* Filters */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 p-6 sm:p-8 shadow-sm"
+        className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 p-4 sm:p-6 shadow-sm"
       >
-        <div className="flex flex-col sm:flex-row lg:flex-row gap-4 sm:gap-6">
-          {/* Search */}
-          <div className="flex-1 relative">
-            <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-            <input
-              type="text"
-              placeholder="Search transactions..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 sm:py-4 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 text-base"
-            />
+        <div className="space-y-4">
+          {/* Search and Filter Controls */}
+          <div className="flex flex-col lg:flex-row gap-4">
+            {/* Search */}
+            <div className="flex-1 relative">
+              <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+              <input
+                type="text"
+                placeholder="Search transactions..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-10 pr-4 py-3 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400"
+              />
+            </div>
+
+            {/* Category Filter */}
+            <div className="relative min-w-[200px]">
+              <FunnelIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+              <select
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className="w-full pl-10 pr-8 py-3 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-slate-900 dark:text-white appearance-none"
+              >
+                <option value="all">All Categories</option>
+                <option value="Food & Dining">Food & Dining</option>
+                <option value="Shopping">Shopping</option>
+                <option value="Transport">Transport</option>
+                <option value="Entertainment">Entertainment</option>
+                <option value="Bills">Bills</option>
+                <option value="Healthcare">Healthcare</option>
+                <option value="Others">Others</option>
+              </select>
+            </div>
+
+            {/* Date Range */}
+            <div className="relative min-w-[180px]">
+              <CalendarDaysIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+              <select
+                value={dateRange}
+                onChange={(e) => setDateRange(e.target.value)}
+                className="w-full pl-10 pr-8 py-3 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-slate-900 dark:text-white appearance-none"
+              >
+                <option value="all">All Time</option>
+                <option value="today">Today</option>
+                <option value="week">This Week</option>
+                <option value="month">This Month</option>
+                <option value="quarter">This Quarter</option>
+                <option value="year">This Year</option>
+              </select>
+            </div>
           </div>
 
-          {/* Category Filter */}
-          <div className="relative flex-1 sm:flex-none sm:min-w-[200px]">
-            <FunnelIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-            <select
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              className="w-full pl-10 pr-8 py-3 sm:py-4 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-slate-900 dark:text-white appearance-none text-base"
-            >
-              <option value="all">All Categories</option>
-              <option value="Food & Dining">Food & Dining</option>
-              <option value="Shopping">Shopping</option>
-              <option value="Transport">Transport</option>
-              <option value="Entertainment">Entertainment</option>
-              <option value="Bills">Bills</option>
-              <option value="Healthcare">Healthcare</option>
-              <option value="Others">Others</option>
-            </select>
-          </div>
+          {/* Active Filters & Clear Button */}
+          {hasActiveFilters && (
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-sm text-slate-600 dark:text-slate-400">Active filters:</span>
+              {searchTerm && (
+                <span className="px-2 py-1 bg-primary-100 dark:bg-primary-900/50 text-primary-800 dark:text-primary-300 rounded text-sm">
+                  Search: "{searchTerm}"
+                </span>
+              )}
+              {selectedCategory !== 'all' && (
+                <span className="px-2 py-1 bg-primary-100 dark:bg-primary-900/50 text-primary-800 dark:text-primary-300 rounded text-sm">
+                  Category: {selectedCategory}
+                </span>
+              )}
+              {dateRange !== 'all' && (
+                <span className="px-2 py-1 bg-primary-100 dark:bg-primary-900/50 text-primary-800 dark:text-primary-300 rounded text-sm">
+                  Date: {dateRange === 'today' ? 'Today' : dateRange === 'week' ? 'This Week' : dateRange === 'month' ? 'This Month' : dateRange}
+                </span>
+              )}
+              <button
+                onClick={clearFilters}
+                className="px-3 py-1 text-sm text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 underline"
+              >
+                Clear all
+              </button>
+            </div>
+          )}
 
-          {/* Date Range */}
-          <div className="relative flex-1 sm:flex-none sm:min-w-[180px]">
-            <CalendarDaysIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-            <select
-              value={dateRange}
-              onChange={(e) => setDateRange(e.target.value)}
-              className="w-full pl-10 pr-8 py-3 sm:py-4 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-slate-900 dark:text-white appearance-none text-base"
-            >
-              <option value="all">All Time</option>
-              <option value="today">Today</option>
-              <option value="week">This Week</option>
-              <option value="month">This Month</option>
-              <option value="quarter">This Quarter</option>
-              <option value="year">This Year</option>
-            </select>
+          {/* Results Count */}
+          <div className="text-sm text-slate-600 dark:text-slate-400">
+            Showing {filteredTransactions.length} transaction{filteredTransactions.length !== 1 ? 's' : ''}
+            {hasActiveFilters && ` (filtered from ${allMockTransactions.length} total)`}
           </div>
         </div>
       </motion.div>
@@ -240,59 +395,58 @@ export default function Transactions() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
+        className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden"
       >
-        <div className="bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
-          <div className="px-4 sm:px-6 py-4 border-b border-slate-200 dark:border-slate-700">
-            <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
-              All Transactions
-            </h3>
-          </div>
-          
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[500px] sm:min-w-[600px]">
-              <thead className="bg-slate-50 dark:bg-slate-900/50">
-                <tr>
-                  <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                    Date
-                  </th>
-                  <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                    Description
-                  </th>
-                  <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider hidden sm:table-cell">
-                    Category
-                  </th>
-                  <th className="px-3 sm:px-6 py-3 text-right text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                    Amount
-                  </th>
-                  <th className="px-3 sm:px-6 py-3 text-center text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider hidden sm:table-cell">
-                    Status
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
-                <AnimatePresence mode="wait">
-                  <motion.tr
-                    key={`page-${currentPage}`}
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -20 }}
-                    transition={{ duration: 0.3, ease: "easeInOut" }}
-                  >
-                    <td colSpan={5} className="p-0">
-                      <TransactionsTable
-                        transactions={getCurrentTransactions()}
-                        onPageChange={handlePageChange}
-                        totalPages={totalPages}
-                        currentPage={currentPage}
-                        loading={isLoading}
-                        hideHeader={true}
-                      />
-                    </td>
-                  </motion.tr>
-                </AnimatePresence>
-              </tbody>
-            </table>
-          </div>
+        <div className="px-4 sm:px-6 py-4 border-b border-slate-200 dark:border-slate-700">
+          <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
+            All Transactions
+          </h3>
+        </div>
+        
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-slate-50 dark:bg-slate-900/50">
+              <tr>
+                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider w-[100px]">
+                  Date
+                </th>
+                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider min-w-[200px]">
+                  Description
+                </th>
+                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider w-[140px] hidden sm:table-cell">
+                  Category
+                </th>
+                <th className="px-4 sm:px-6 py-3 text-right text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider w-[120px]">
+                  Amount
+                </th>
+                <th className="px-4 sm:px-6 py-3 text-center text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider w-[80px] hidden sm:table-cell">
+                  Status
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
+              <AnimatePresence mode="wait">
+                <motion.tr
+                  key={`page-${currentPage}-${searchTerm}-${selectedCategory}-${dateRange}`}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.3, ease: "easeInOut" }}
+                >
+                  <td colSpan={5} className="p-0">
+                    <TransactionsTable
+                      transactions={getCurrentTransactions()}
+                      onPageChange={handlePageChange}
+                      totalPages={totalPages}
+                      currentPage={currentPage}
+                      loading={isLoading}
+                      hideHeader={true}
+                    />
+                  </td>
+                </motion.tr>
+              </AnimatePresence>
+            </tbody>
+          </table>
         </div>
       </motion.div>
     </div>
