@@ -203,78 +203,78 @@ export default function TransactionsTable({
 
   // If hideHeader is true, render only the table content without wrapper
   if (hideHeader) {
+    if (loading) {
+      return (
+        <>
+          {Array.from({ length: 5 }, (_, i) => <SkeletonRow key={`skeleton-${i}`} />)}
+        </>
+      );
+    }
+
     return (
-      <AnimatePresence mode="wait">
-        {loading ? (
-          <>
-            {Array.from({ length: 5 }, (_, i) => <SkeletonRow key={`skeleton-${i}`} />)}
-          </>
-        ) : (
-          <>
-            {transactions.map((transaction, index) => {
-              const StatusIcon = statusIcons[transaction.status];
-              return (
-                <motion.tr
-                  key={transaction.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.05, duration: 0.2 }}
-                  className="h-16 transition-colors duration-200 hover:bg-slate-50 dark:hover:bg-slate-700/50 border-b border-slate-200 dark:border-slate-700"
-                >
-                  <td className="px-6 py-4 w-24 text-left align-middle">
-                    <div className="text-sm font-medium text-slate-900 dark:text-white whitespace-nowrap">
-                      {new Date(transaction.date).toLocaleDateString('en-IN', {
-                        day: 'numeric',
-                        month: 'short',
-                      })}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 min-w-0 flex-1 align-middle">
-                    <div className="text-sm font-medium text-slate-900 dark:text-white truncate" title={transaction.description}>
-                      {transaction.description}
-                    </div>
-                    <div className="text-xs text-slate-500 dark:text-slate-400 lg:hidden mt-1">
-                      {transaction.category}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 w-32 hidden lg:table-cell align-middle">
-                    <div className="flex justify-center">
-                      <span className={clsx(
-                        'inline-flex items-center px-2.5 py-1 text-xs font-medium rounded h-6',
-                        categoryColors[transaction.category] || categoryColors['Others']
-                      )}>
-                        {transaction.category}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 w-28 text-right align-middle">
-                    <div className={clsx(
-                      'text-sm font-semibold tabular-nums',
-                      transaction.amount < 0 
-                        ? 'text-red-600 dark:text-red-400' 
-                        : 'text-green-600 dark:text-green-400'
-                    )}>
-                      {transaction.amount < 0 ? '-' : '+'}₹{Math.abs(transaction.amount).toLocaleString()}
-                    </div>
-                    <div className="flex items-center justify-end mt-1 sm:hidden">
-                      <StatusIcon 
-                        className={clsx('w-4 h-4', statusColors[transaction.status])} 
-                      />
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 w-20 hidden sm:table-cell align-middle">
-                    <div className="flex items-center justify-center">
-                      <StatusIcon 
-                        className={clsx('w-5 h-5', statusColors[transaction.status])} 
-                      />
-                    </div>
-                  </td>
-                </motion.tr>
-              );
-            })}
-          </>
-        )}
-      </AnimatePresence>
+      <>
+        {transactions.map((transaction, index) => {
+          const StatusIcon = statusIcons[transaction.status];
+          return (
+            <motion.tr
+              key={transaction.id}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.05, duration: 0.2 }}
+              className="h-16 transition-colors duration-200 hover:bg-slate-50 dark:hover:bg-slate-700/50 border-b border-slate-200 dark:border-slate-700"
+            >
+              <td className="px-6 py-4 w-24 text-left align-middle">
+                <div className="text-sm font-medium text-slate-900 dark:text-white whitespace-nowrap">
+                  {new Date(transaction.date).toLocaleDateString('en-IN', {
+                    day: 'numeric',
+                    month: 'short',
+                  })}
+                </div>
+              </td>
+              <td className="px-6 py-4 min-w-0 flex-1 align-middle">
+                <div className="text-sm font-medium text-slate-900 dark:text-white truncate" title={transaction.description}>
+                  {transaction.description}
+                </div>
+                <div className="text-xs text-slate-500 dark:text-slate-400 lg:hidden mt-1">
+                  {transaction.category}
+                </div>
+              </td>
+              <td className="px-6 py-4 w-32 hidden lg:table-cell align-middle">
+                <div className="flex justify-center">
+                  <span className={clsx(
+                    'inline-flex items-center px-2.5 py-1 text-xs font-medium rounded h-6',
+                    categoryColors[transaction.category] || categoryColors['Others']
+                  )}>
+                    {transaction.category}
+                  </span>
+                </div>
+              </td>
+              <td className="px-6 py-4 w-28 text-right align-middle">
+                <div className={clsx(
+                  'text-sm font-semibold tabular-nums',
+                  transaction.amount < 0 
+                    ? 'text-red-600 dark:text-red-400' 
+                    : 'text-green-600 dark:text-green-400'
+                )}>
+                  {transaction.amount < 0 ? '-' : '+'}₹{Math.abs(transaction.amount).toLocaleString()}
+                </div>
+                <div className="flex items-center justify-end mt-1 sm:hidden">
+                  <StatusIcon 
+                    className={clsx('w-4 h-4', statusColors[transaction.status])} 
+                  />
+                </div>
+              </td>
+              <td className="px-6 py-4 w-20 hidden sm:table-cell align-middle">
+                <div className="flex items-center justify-center">
+                  <StatusIcon 
+                    className={clsx('w-5 h-5', statusColors[transaction.status])} 
+                  />
+                </div>
+              </td>
+            </motion.tr>
+          );
+        })}
+      </>
     );
   }
 

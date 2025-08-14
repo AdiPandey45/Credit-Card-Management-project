@@ -424,16 +424,25 @@ export default function Transactions() {
                 </th>
               </tr>
             </thead>
-            <tbody>
-              <TransactionsTable
-                transactions={getCurrentTransactions()}
-                onPageChange={handlePageChange}
-                totalPages={totalPages}
-                currentPage={currentPage}
-                loading={isLoading}
-                hideHeader={true}
-              />
-            </tbody>
+            <AnimatePresence mode="wait">
+              <motion.tbody
+                key={`page-${currentPage}`}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+                className="divide-y divide-slate-200 dark:divide-slate-700"
+              >
+                <TransactionsTable
+                  transactions={getCurrentTransactions()}
+                  onPageChange={handlePageChange}
+                  totalPages={totalPages}
+                  currentPage={currentPage}
+                  loading={isLoading}
+                  hideHeader={true}
+                />
+              </motion.tbody>
+            </AnimatePresence>
           </table>
         </div>
         
