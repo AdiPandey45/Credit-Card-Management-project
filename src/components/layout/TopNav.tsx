@@ -1,4 +1,5 @@
 import React, { Fragment } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Menu, Transition } from '@headlessui/react';
 import { motion } from 'framer-motion';
 import clsx from 'clsx';
@@ -21,6 +22,7 @@ interface TopNavProps {
 export default function TopNav({ onMenuClick }: TopNavProps) {
   const { theme, toggleTheme } = useTheme();
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
 
   return (
     <nav className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl border-b border-gray-200 dark:border-gray-700 sticky top-0 z-30">
@@ -93,6 +95,7 @@ export default function TopNav({ onMenuClick }: TopNavProps) {
                     <Menu.Item>
                       {({ active }) => (
                         <button
+                          onClick={() => navigate('/profile')}
                           className={clsx(
                             'flex w-full items-center rounded-lg px-3 py-2 text-sm',
                             active
@@ -108,6 +111,7 @@ export default function TopNav({ onMenuClick }: TopNavProps) {
                     <Menu.Item>
                       {({ active }) => (
                         <button
+                          onClick={() => navigate('/settings')}
                           className={clsx(
                             'flex w-full items-center rounded-lg px-3 py-2 text-sm',
                             active

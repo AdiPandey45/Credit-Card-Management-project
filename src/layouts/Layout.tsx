@@ -12,7 +12,7 @@ interface LayoutProps {
 export default function Layout({ children }: LayoutProps) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
     if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('creditflow-sidebar-collapsed');
+      const saved = localStorage.getItem('sidebar-collapsed');
       return saved === 'true';
     }
     return false;
@@ -22,7 +22,7 @@ export default function Layout({ children }: LayoutProps) {
   const toggleSidebar = () => {
     const newCollapsed = !sidebarCollapsed;
     setSidebarCollapsed(newCollapsed);
-    localStorage.setItem('creditflow-sidebar-collapsed', newCollapsed.toString());
+    localStorage.setItem('sidebar-collapsed', newCollapsed.toString());
   };
 
   return (

@@ -1,8 +1,44 @@
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { UserIcon, EnvelopeIcon, PhoneIcon, MapPinIcon } from '@heroicons/react/24/outline';
+import { useAuth } from '../hooks/useAuth';
 
 export default function Profile() {
+  const { user, updateUser } = useAuth();
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const result = e.target?.result as string;
+        setSelectedImage(result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleSavePhoto = async () => {
+    if (selectedImage) {
+      setIsUploading(true);
+      // Simulate upload delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      updateUser({ avatar: selectedImage });
+      setSelectedImage(null);
+      setIsUploading(false);
+    }
+  };
+
+  const handleCancelPhoto = () => {
+    setSelectedImage(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
   return (
     <div className="max-w-4xl mx-auto space-y-8">
       <motion.div
@@ -27,6 +63,7 @@ export default function Profile() {
         >
           <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-xl p-6 shadow-lg border border-gray-200/50 dark:border-gray-700/50">
             <div className="text-center">
+              <div className="relative inline-block mb-4">
               <img
                 className="w-24 h-24 rounded-full mx-auto mb-4 ring-4 ring-gray-200 dark:ring-gray-600"
                 src="https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&dpr=2"
@@ -73,7 +110,7 @@ export default function Profile() {
                   </label>
                   <input
                     type="email"
-                    defaultValue="john.doe@example.com"
+                    defaultValue={user?.email}
                     className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 dark:text-white"
                   />
                 </div>
@@ -107,9 +144,15 @@ export default function Profile() {
                 </label>
                 <textarea
                   rows={3}
-                  defaultValue="123 Main Street, Apartment 4B, Mumbai, Maharashtra 400001"
+                  src={selectedImage || user?.avatar}
                   className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 dark:text-white resize-none"
                 />
+                {selectedImage && (
+                  <div className="absolute inset-0 bg-black bg-opacity-50 rounded-full flex items-center justify-center">
+                    <span className="text-white text-xs">Preview</span>
+                  </div>
+                )}
+              </div>
               </div>
 
               <div className="flex justify-end space-x-4 pt-6 border-t border-gray-200 dark:border-gray-700">
@@ -122,12 +165,44 @@ export default function Profile() {
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  type="submit"
+                {user?.name}
                   className="px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-medium rounded-xl hover:shadow-lg transition-all duration-200"
                 >
-                  Save Changes
-                </motion.button>
-              </div>
+              
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                className="hidden"
+              />
+              
+              {!selectedImage ? (
+                <button 
+                  onClick={() => fileInputRef.current?.click()}
+                  className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+                >
+                  Change Photo
+                </button>
+              ) : (
+                <div className="space-y-2">
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={handleSavePhoto}
+                    disabled={isUploading}
+                    className="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50"
+                  >
+                    {isUploading ? 'Saving...' : 'Save Photo'}
+                  </motion.button>
+                  <button
+                    onClick={handleCancelPhoto}
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              )}
             </form>
           </div>
         </motion.div>
@@ -135,3 +210,4 @@ export default function Profile() {
     </div>
   );
 }
+                    defaultValue={user?.name}
