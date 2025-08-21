@@ -189,5 +189,3 @@ export default function Payments() {
         </form>
       </motion.div>
     </div>
-  );
-}
