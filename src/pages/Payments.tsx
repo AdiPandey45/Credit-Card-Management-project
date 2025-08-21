@@ -182,7 +182,6 @@ export default function Payments() {
             whileTap={{ scale: 0.98 }}
             type="submit"
             disabled={isLoading || !amount}
-            className="w-full px-6 py-4 sm:py-5 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded shadow-sm hover:shadow transition-all duration-200 text-lg"
             className={`w-full px-6 py-4 sm:py-5 bg-primary-600 hover:bg-primary-700 disabled:bg-primary-400 disabled:cursor-not-allowed text-white font-semibold rounded shadow-sm hover:shadow transition-all duration-200 text-lg ${isLoading ? 'opacity-75' : ''}`}
           >
             {isLoading ? 'Processing Payment...' : 'Make Payment'}
@@ -191,6 +190,4 @@ export default function Payments() {
       </motion.div>
     </div>
   );
-}
-  )
 }
