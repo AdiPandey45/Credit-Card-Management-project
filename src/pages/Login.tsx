@@ -14,21 +14,36 @@ export default function Login() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!email || !password) {
+      showToast({
+        type: 'error',
+        title: 'Missing Information',
+        message: 'Please enter both email and password'
+      });
+      return;
+    }
+
     setIsLoading(true);
+    
     try {
       const response = await login(email, password);
+      
       if (response.success) {
         showToast({
           type: 'success',
           title: 'Login Successful',
           message: `Welcome back, ${response.data.user.name}!`
         });
+      } else {
+        throw new Error(response.message || 'Login failed');
       }
     } catch (error) {
+      console.error('Login error:', error);
       showToast({
         type: 'error',
         title: 'Login Failed',
-        message: error instanceof Error ? error.message : 'Invalid credentials'
+        message: error instanceof Error ? error.message : 'Invalid credentials. Please try again.'
       });
     } finally {
       setIsLoading(false);
@@ -71,6 +86,7 @@ export default function Login() {
                   className="w-full pl-10 pr-4 py-3 rounded-md border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-neutral-900 dark:text-white"
                   placeholder="Enter your email"
                   required
+                  disabled={isLoading}
                 />
               </div>
             </div>
@@ -88,11 +104,13 @@ export default function Login() {
                   className="w-full pl-10 pr-12 py-3 rounded-md border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-neutral-900 dark:text-white"
                   placeholder="Enter your password"
                   required
+                  disabled={isLoading}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300"
+                  disabled={isLoading}
                 >
                   {showPassword ? (
                     <EyeSlashIcon className="w-5 h-5" />
@@ -108,31 +126,51 @@ export default function Login() {
                 <input
                   type="checkbox"
                   className="w-4 h-4 text-primary-600 bg-neutral-100 border-neutral-300 rounded focus:ring-primary-500 focus:ring-2"
+                  disabled={isLoading}
                 />
                 <span className="ml-2 text-sm text-neutral-600 dark:text-neutral-400">
                   Remember me
                 </span>
               </label>
-              <a href="#" className="text-sm text-primary-600 dark:text-primary-400 hover:underline">
+              <button
+                type="button"
+                className="text-sm text-primary-600 dark:text-primary-400 hover:underline"
+                disabled={isLoading}
+              >
                 Forgot password?
-              </a>
+              </button>
             </div>
 
             <motion.button
-              whileHover={{ scale: 1.01 }}
-              whileTap={{ scale: 0.98 }}
+              whileHover={!isLoading ? { scale: 1.01 } : {}}
+              whileTap={!isLoading ? { scale: 0.98 } : {}}
               type="submit"
               disabled={isLoading}
-              className="w-full px-4 py-3 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-md transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full px-4 py-3 bg-primary-600 hover:bg-primary-700 disabled:bg-primary-400 disabled:cursor-not-allowed text-white font-medium rounded-md transition-all duration-150"
             >
-              {isLoading ? 'Signing in...' : 'Sign in'}
+              {isLoading ? (
+                <div className="flex items-center justify-center">
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                  Signing in...
+                </div>
+              ) : (
+                'Sign in'
+              )}
             </motion.button>
           </form>
 
           <div className="mt-8 text-center">
-            <p className="text-neutral-600 dark:text-neutral-400 text-sm">
-              Demo credentials: john.doe@example.com / password123
-            </p>
+            <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+              <p className="text-blue-800 dark:text-blue-200 text-sm font-medium mb-2">
+                Demo Access
+              </p>
+              <p className="text-blue-600 dark:text-blue-300 text-xs">
+                Use any email and password to sign in
+              </p>
+              <p className="text-blue-600 dark:text-blue-300 text-xs mt-1">
+                Default: john.doe@example.com / password123
+              </p>
+            </div>
           </div>
         </div>
       </motion.div>
