@@ -4,7 +4,8 @@ import {
   BanknotesIcon, 
   CreditCardIcon, 
   BoltIcon,
-  ExclamationTriangleIcon 
+  ExclamationTriangleIcon,
+  CheckCircleIcon
 } from '@heroicons/react/24/outline';
 import { usePayments } from '../hooks/usePayments';
 import { useToast } from '../hooks/useToast';
@@ -15,6 +16,8 @@ export default function Payments() {
   const [amount, setAmount] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('');
   const [errors, setErrors] = useState<{ amount?: string; method?: string }>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [lastSubmissionTime, setLastSubmissionTime] = useState(0);
   const { makePayment, isLoading, error, clearError } = usePayments();
   const { showToast } = useToast();
   const { user } = useAuth();
@@ -75,8 +78,18 @@ export default function Payments() {
     
     // Prevent multiple decimal points
     const parts = sanitizedValue.split('.');
-    if (parts.length > 2) {
-      return;
+    // Allow only numbers, decimal point, and handle edge cases
+    let sanitizedValue = value.replace(/[^0-9.]/g, '');
+    }
+    
+    // Check for non-numeric characters (except decimal point)
+    if (!/^\d*\.?\d*$/.test(value)) {
+      sanitizedValue = parts[0] + '.' + parts.slice(1).join('');
+    }
+    
+    // Prevent leading zeros (except for decimal numbers like 0.5)
+    if (sanitizedValue.length > 1 && sanitizedValue[0] === '0' && sanitizedValue[1] !== '.') {
+      sanitizedValue = sanitizedValue.substring(1);
     }
     
     setAmount(sanitizedValue);
@@ -84,6 +97,11 @@ export default function Payments() {
     // Clear amount error when user starts typing
     if (errors.amount) {
       setErrors(prev => ({ ...prev, amount: '' }));
+    }
+    
+    // Clear general error when user makes changes
+    if (error) {
+      clearError();
     }
   };
 
@@ -94,6 +112,11 @@ export default function Payments() {
     if (errors.method) {
       setErrors(prev => ({ ...prev, method: '' }));
     }
+    
+    // Clear general error when user makes changes
+    if (error) {
+      clearError();
+    }
   };
 
   const handleQuickAmount = (quickAmount: number) => {
@@ -102,6 +125,11 @@ export default function Payments() {
     // Clear amount error
     if (errors.amount) {
       setErrors(prev => ({ ...prev, amount: '' }));
+    }
+    
+    // Clear general error
+    if (error) {
+      clearError();
     }
   };
 
@@ -128,8 +156,18 @@ export default function Payments() {
     return methodObj ? methodObj.name : method;
   };
 
+  // Prevent duplicate submissions
+  const canSubmit = () => {
+    const now = Date.now();
+    return !isSubmitting && !isLoading && (now - lastSubmissionTime > 2000);
+  };
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Prevent duplicate submissions
+    if (!canSubmit()) {
+      return;
+    }
     
     if (!validateForm()) {
       showToast({
@@ -149,33 +187,87 @@ export default function Payments() {
       return;
     }
 
+    setIsSubmitting(true);
+    setLastSubmissionTime(Date.now());
     clearError();
     
     try {
       const paymentAmount = parseFloat(amount);
+      
+      // Validate amount one more time before submission
+      if (paymentAmount > outstandingBalance) {
+        throw new Error(`Amount ₹${paymentAmount.toLocaleString()} exceeds outstanding balance of ₹${outstandingBalance.toLocaleString()}`);
+      }
+      
       const result = await makePayment(demoAccountId, paymentAmount, paymentMethod);
       
       if (result) {
         showToast({
           type: 'success',
           title: 'Payment Successful',
-          message: `₹${result.amount.toLocaleString()} paid successfully via ${getMethodDisplayName(paymentMethod)}`
+          message: `₹${result.amount.toLocaleString()} paid successfully via ${getMethodDisplayName(paymentMethod)}`,
+          duration: 6000
         });
         
         // Reset form only after success
         setAmount('');
         setPaymentMethod('');
         setErrors({});
+        
+        // Optional: Refresh account data or update balance in real-time
+        // This would typically trigger a refetch of account data
       }
     } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : (error || 'Payment processing failed. Please try again.');
       showToast({
         type: 'error',
         title: 'Payment Failed',
-        message: error || 'Please try again later'
+        message: errorMessage,
+        duration: 8000
       });
+      
+      // Don't reset form on error - let user retry
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
+  // Real-time validation feedback
+  const getAmountInputClass = () => {
+    const baseClass = 'w-full pl-10 pr-4 py-4 rounded border transition-all duration-200 bg-white dark:bg-slate-900 placeholder-slate-400 dark:placeholder-slate-500 text-slate-900 dark:text-white text-lg';
+    
+    if (errors.amount) {
+      return `${baseClass} border-red-300 dark:border-red-600 focus:border-red-500 focus:ring-2 focus:ring-red-500`;
+    }
+    
+    if (amount && !validateAmount(amount)) {
+      return `${baseClass} border-green-300 dark:border-green-600 focus:border-green-500 focus:ring-2 focus:ring-green-500`;
+    }
+    
+    return `${baseClass} border-slate-300 dark:border-slate-600 focus:border-primary-500 focus:ring-2 focus:ring-primary-500`;
+  };
+
+  // Get button state and styling
+  const getButtonState = () => {
+    const isValid = isFormValid();
+    const canSubmitNow = canSubmit();
+    const isProcessing = isSubmitting || isLoading;
+    
+    return {
+      disabled: !isValid || !canSubmitNow || isProcessing,
+      className: clsx(
+        'w-full px-6 py-4 sm:py-5 font-semibold rounded shadow-sm transition-all duration-200 text-lg',
+        isValid && canSubmitNow && !isProcessing
+          ? 'bg-primary-600 hover:bg-primary-700 text-white hover:shadow-lg cursor-pointer'
+          : 'bg-slate-300 dark:bg-slate-600 text-slate-500 dark:text-slate-400 cursor-not-allowed'
+      ),
+      text: isProcessing 
+        ? 'Processing Payment...' 
+        : amount 
+          ? `Pay ₹${parseFloat(amount || '0').toLocaleString()}` 
+          : 'Enter Amount to Pay'
+    };
+  };
   return (
     <div className="max-w-4xl mx-auto space-y-6 sm:space-y-8">
       <motion.div
@@ -224,16 +316,12 @@ export default function Payments() {
                 value={amount}
                 onChange={(e) => handleAmountChange(e.target.value)}
                 placeholder="0.00"
-                className={clsx(
-                  'w-full pl-10 pr-4 py-4 rounded border transition-all duration-200',
-                  'bg-white dark:bg-slate-900',
-                  'placeholder-slate-400 dark:placeholder-slate-500',
-                  'text-slate-900 dark:text-white text-lg',
-                  errors.amount
-                    ? 'border-red-300 dark:border-red-600 focus:border-red-500 focus:ring-2 focus:ring-red-500'
-                    : 'border-slate-300 dark:border-slate-600 focus:border-primary-500 focus:ring-2 focus:ring-primary-500'
-                )}
+                className={getAmountInputClass()}
+                disabled={isSubmitting || isLoading}
               />
+              {amount && !errors.amount && validateAmount(amount) === '' && (
+                <CheckCircleIcon className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-green-500" />
+              )}
             </div>
             
             {/* Amount Error */}
@@ -249,6 +337,7 @@ export default function Payments() {
               <button
                 type="button"
                 onClick={() => handleQuickAmount(outstandingBalance)}
+                disabled={isSubmitting || isLoading}
                 className="px-4 py-2 text-sm bg-primary-50 dark:bg-primary-900 text-primary-700 dark:text-primary-300 rounded hover:bg-primary-100 dark:hover:bg-primary-800 transition-colors"
               >
                 Full Amount (₹{outstandingBalance.toLocaleString()})
@@ -256,6 +345,7 @@ export default function Payments() {
               <button
                 type="button"
                 onClick={() => handleQuickAmount(minimumDue)}
+                disabled={isSubmitting || isLoading}
                 className="px-4 py-2 text-sm bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors"
               >
                 Minimum Due (₹{minimumDue.toLocaleString()})
@@ -281,6 +371,7 @@ export default function Payments() {
                     whileTap={{ scale: 0.99 }}
                     className={clsx(
                       'flex items-center p-4 rounded-xl border-2 cursor-pointer transition-all duration-200',
+                      (isSubmitting || isLoading) && 'opacity-50 cursor-not-allowed',
                       isSelected
                         ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/50'
                         : 'border-slate-300 dark:border-slate-600 hover:border-primary-300 dark:hover:border-primary-700'
@@ -292,6 +383,7 @@ export default function Payments() {
                       value={method.id}
                       checked={isSelected}
                       onChange={(e) => handleMethodChange(e.target.value)}
+                      disabled={isSubmitting || isLoading}
                       className="sr-only"
                     />
                     
@@ -342,28 +434,37 @@ export default function Payments() {
             )}
           </div>
 
+          {/* General Error Display */}
+          {error && !errors.amount && !errors.method && (
+            <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+              <div className="flex items-center text-red-600 dark:text-red-400">
+                <ExclamationTriangleIcon className="w-5 h-5 mr-2" />
+                <span className="text-sm font-medium">{error}</span>
+              </div>
+            </div>
+          )}
           {/* Submit Button */}
+          {(() => {
+            const buttonState = getButtonState();
+            return (
           <motion.button
-            whileHover={isFormValid() && !isLoading ? { scale: 1.02 } : {}}
-            whileTap={isFormValid() && !isLoading ? { scale: 0.98 } : {}}
+                whileHover={!buttonState.disabled ? { scale: 1.02 } : {}}
+                whileTap={!buttonState.disabled ? { scale: 0.98 } : {}}
             type="submit"
-            disabled={!isFormValid() || isLoading}
-            className={clsx(
-              'w-full px-6 py-4 sm:py-5 font-semibold rounded shadow-sm transition-all duration-200 text-lg',
-              isFormValid() && !isLoading
-                ? 'bg-primary-600 hover:bg-primary-700 text-white hover:shadow-lg'
-                : 'bg-slate-300 dark:bg-slate-600 text-slate-500 dark:text-slate-400 cursor-not-allowed'
-            )}
+                disabled={buttonState.disabled}
+                className={buttonState.className}
           >
-            {isLoading ? (
+                {(isSubmitting || isLoading) ? (
               <div className="flex items-center justify-center">
                 <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                Processing Payment...
+                    {buttonState.text}
               </div>
             ) : (
-              `Pay ${amount ? `₹${parseFloat(amount || '0').toLocaleString()}` : 'Amount'}`
+                  buttonState.text
             )}
           </motion.button>
+            );
+          })()}
         </form>
       </motion.div>
     </div>

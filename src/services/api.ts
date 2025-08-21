@@ -136,14 +136,27 @@ export const accountsAPI = {
 export const paymentsAPI = {
   createPayment: async (accountId: string, amount: number, method: string) => {
     try {
+      // Validate inputs before making request
+      if (!accountId || !amount || !method) {
+        throw new Error('Missing required payment parameters');
+      }
+      
+      if (amount <= 0) {
+        throw new Error('Payment amount must be greater than zero');
+      }
+      
+      if (!['bank', 'card', 'instant'].includes(method)) {
+        throw new Error('Invalid payment method. Must be bank, card, or instant');
+      }
+      
       // Simulate payment processing for demo
-      const isSuccess = true; // Always succeed for demo
+      const isSuccess = Math.random() > 0.05; // 95% success rate for more realistic testing
       
       const mockResponse = {
         success: isSuccess,
         message: isSuccess 
           ? `Payment of ₹${amount.toLocaleString()} successful`
-          : 'Payment failed. Please try again.',
+          : 'Payment gateway temporarily unavailable. Please try again in a few moments.',
         data: {
           paymentId: `PAY_${Date.now()}_${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
           amount: amount,
@@ -154,8 +167,9 @@ export const paymentsAPI = {
         }
       };
 
-      // Simulate network delay
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // Simulate realistic network delay (1-3 seconds)
+      const delay = 1000 + Math.random() * 2000;
+      await new Promise(resolve => setTimeout(resolve, delay));
       
       if (!isSuccess) {
         throw new Error(mockResponse.message);

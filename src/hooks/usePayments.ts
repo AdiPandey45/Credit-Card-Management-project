@@ -36,6 +36,19 @@ export function usePayments(): UsePaymentsReturn {
     setError(null);
 
     try {
+      // Additional client-side validation
+      if (!accountId || !amount || !method) {
+        throw new Error('Missing required payment information');
+      }
+      
+      if (amount <= 0) {
+        throw new Error('Payment amount must be greater than zero');
+      }
+      
+      if (!['bank', 'card', 'instant'].includes(method)) {
+        throw new Error('Invalid payment method selected');
+      }
+      
       const response = await paymentsAPI.createPayment(accountId, amount, method);
       
       if (response.success) {
@@ -47,6 +60,7 @@ export function usePayments(): UsePaymentsReturn {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Payment processing failed';
       setError(errorMessage);
+      console.error('Payment error:', err);
       return null;
     } finally {
       setIsLoading(false);
