@@ -4,11 +4,6 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 require('dotenv').config();
 
-// Import routes
-const authRoutes = require('./routes/auth');
-const paymentsRoutes = require('./routes/payments');
-const accountsRoutes = require('./routes/accounts');
-
 const app = express();
 const PORT = process.env.PORT || 3001;
 
@@ -48,10 +43,72 @@ app.get('/health', (req, res) => {
   });
 });
 
-// API routes
-app.use('/api/auth', authRoutes);
-app.use('/api/payments', paymentsRoutes);
-app.use('/api/accounts', accountsRoutes);
+// Mock API routes for demo
+app.post('/api/auth/login', (req, res) => {
+  const { email, password } = req.body;
+  
+  // Demo login - accepts any credentials
+  res.json({
+    success: true,
+    message: 'Login successful',
+    data: {
+      token: 'demo_jwt_token_' + Date.now(),
+      user: {
+        id: '550e8400-e29b-41d4-a716-446655440000',
+        name: 'John Doe',
+        email: email
+      }
+    }
+  });
+});
+
+app.post('/api/payments', (req, res) => {
+  const { accountId, amount, method } = req.body;
+  
+  // Simulate payment processing
+  const isSuccess = Math.random() > 0.05; // 95% success rate
+  
+  if (isSuccess) {
+    res.json({
+      success: true,
+      message: `Payment of ₹${amount.toLocaleString()} successful`,
+      data: {
+        paymentId: `PAY_${Date.now()}_${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
+        amount: amount,
+        method: method,
+        status: 'success',
+        newBalance: 45320 - amount,
+        timestamp: new Date().toISOString()
+      }
+    });
+  } else {
+    res.status(400).json({
+      success: false,
+      message: 'Payment gateway temporarily unavailable. Please try again.',
+      data: {
+        paymentId: `PAY_${Date.now()}_${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
+        amount: amount,
+        method: method,
+        status: 'failed',
+        timestamp: new Date().toISOString()
+      }
+    });
+  }
+});
+
+app.get('/api/accounts', (req, res) => {
+  res.json({
+    success: true,
+    data: [{
+      id: '660e8400-e29b-41d4-a716-446655440000',
+      cardNumber: '****-****-****-9012',
+      cardType: 'Platinum',
+      creditLimit: 500000,
+      outstandingBalance: 45320,
+      availableCredit: 454680
+    }]
+  });
+});
 
 // 404 handler
 app.use('*', (req, res) => {
