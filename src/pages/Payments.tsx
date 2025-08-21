@@ -95,7 +95,6 @@ export default function Payments() {
           </p>
         </div>
 
-        <form className="space-y-8">
         <form onSubmit={handleSubmit} className="space-y-8">
           <div>
             <label className="block text-base font-medium text-slate-700 dark:text-slate-300 mb-3">
