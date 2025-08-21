@@ -74,17 +74,18 @@ export default function Payments() {
 
   const handleAmountChange = (value: string) => {
     // Allow only numbers and decimal point
-    const sanitizedValue = value.replace(/[^0-9.]/g, '');
+    let sanitizedValue = value.replace(/[^0-9.]/g, '');
     
     // Prevent multiple decimal points
     const parts = sanitizedValue.split('.');
     // Allow only numbers, decimal point, and handle edge cases
-    let sanitizedValue = value.replace(/[^0-9.]/g, '');
+    if (parts.length > 2) {
+      sanitizedValue = parts[0] + '.' + parts.slice(1).join('');
     }
     
     // Check for non-numeric characters (except decimal point)
-    if (!/^\d*\.?\d*$/.test(value)) {
-      sanitizedValue = parts[0] + '.' + parts.slice(1).join('');
+    if (!/^\d*\.?\d*$/.test(sanitizedValue)) {
+      return;
     }
     
     // Prevent leading zeros (except for decimal numbers like 0.5)
