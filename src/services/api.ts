@@ -137,7 +137,7 @@ export const paymentsAPI = {
   createPayment: async (accountId: string, amount: number, method: string) => {
     try {
       // Simulate payment processing for demo
-      const isSuccess = Math.random() > 0.1; // 90% success rate
+      const isSuccess = true; // Always succeed for demo
       
       const mockResponse = {
         success: isSuccess,
