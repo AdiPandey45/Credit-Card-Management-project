@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { AuthProvider } from './contexts/AuthContext';
+import { ToastContainer } from './components/ui/Toast';
+import { useToast } from './hooks/useToast';
 import Layout from './layouts/Layout';
 import Dashboard from './pages/Dashboard';
 import ApplyCard from './pages/ApplyCard';
@@ -23,6 +25,17 @@ const queryClient = new QueryClient({
     },
   },
 });
+
+function AppWithToast() {
+  const { toasts, removeToast } = useToast();
+  
+  return (
+    <>
+      <AppRoutes />
+      <ToastContainer toasts={toasts} onClose={removeToast} />
+    </>
+  );
+}
 
 function AppRoutes() {
   const { isAuthenticated } = useAuth();
@@ -55,7 +68,7 @@ function App() {
         <AuthProvider>
           <Router>
             <div className="min-h-screen bg-neutral-50 dark:bg-neutral-900 transition-colors duration-200">
-              <AppRoutes />
+              <AppWithToast />
             </div>
           </Router>
         </AuthProvider>

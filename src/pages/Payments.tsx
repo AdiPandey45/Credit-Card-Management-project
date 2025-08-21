@@ -1,10 +1,67 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { BanknotesIcon, CreditCardIcon } from '@heroicons/react/24/outline';
+import { usePayments } from '../hooks/usePayments';
+import { useToast } from '../hooks/useToast';
+import { useAuth } from '../hooks/useAuth';
 
 export default function Payments() {
   const [amount, setAmount] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('bank');
+  const { makePayment, isLoading, error, clearError } = usePayments();
+  const { showToast } = useToast();
+  const { user } = useAuth();
+
+  // Demo account ID - in real app, this would come from user's accounts
+  const demoAccountId = '660e8400-e29b-41d4-a716-446655440000';
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!amount || parseFloat(amount) <= 0) {
+      showToast({
+        type: 'error',
+        title: 'Invalid Amount',
+        message: 'Please enter a valid payment amount'
+      });
+      return;
+    }
+
+    if (!user) {
+      showToast({
+        type: 'error',
+        title: 'Authentication Required',
+        message: 'Please log in to make a payment'
+      });
+      return;
+    }
+
+    clearError();
+    
+    try {
+      const result = await makePayment(demoAccountId, parseFloat(amount), paymentMethod);
+      
+      if (result) {
+        showToast({
+          type: 'success',
+          title: 'Payment Successful',
+          message: `Payment of ₹${result.amount.toLocaleString()} completed successfully`
+        });
+        
+        // Reset form
+        setAmount('');
+        
+        // Optionally refresh dashboard data here
+        // window.location.reload(); // Simple approach, or use state management
+      }
+    } catch (err) {
+      showToast({
+        type: 'error',
+        title: 'Payment Failed',
+        message: error || 'Please try again later'
+      });
+    }
+  };
 
   return (
     <div className="max-w-4xl mx-auto space-y-6 sm:space-y-8">
@@ -39,6 +96,7 @@ export default function Payments() {
         </div>
 
         <form className="space-y-8">
+        <form onSubmit={handleSubmit} className="space-y-8">
           <div>
             <label className="block text-base font-medium text-slate-700 dark:text-slate-300 mb-3">
               Payment Amount
@@ -124,9 +182,11 @@ export default function Payments() {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             type="submit"
+            disabled={isLoading || !amount}
             className="w-full px-6 py-4 sm:py-5 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded shadow-sm hover:shadow transition-all duration-200 text-lg"
+            className={`w-full px-6 py-4 sm:py-5 bg-primary-600 hover:bg-primary-700 disabled:bg-primary-400 disabled:cursor-not-allowed text-white font-semibold rounded shadow-sm hover:shadow transition-all duration-200 text-lg ${isLoading ? 'opacity-75' : ''}`}
           >
-            Make Payment
+            {isLoading ? 'Processing Payment...' : 'Make Payment'}
           </motion.button>
         </form>
       </motion.div>

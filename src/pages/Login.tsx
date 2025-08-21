@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { EnvelopeIcon, LockClosedIcon, EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 import { useAuth } from '../hooks/useAuth';
+import { useToast } from '../hooks/useToast';
 
 export default function Login() {
   const [email, setEmail] = useState('john.doe@example.com');
@@ -9,12 +10,26 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
+  const { showToast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      await login(email, password);
+      const response = await login(email, password);
+      if (response.success) {
+        showToast({
+          type: 'success',
+          title: 'Login Successful',
+          message: `Welcome back, ${response.data.user.name}!`
+        });
+      }
+    } catch (error) {
+      showToast({
+        type: 'error',
+        title: 'Login Failed',
+        message: error instanceof Error ? error.message : 'Invalid credentials'
+      });
     } finally {
       setIsLoading(false);
     }

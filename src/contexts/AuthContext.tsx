@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { authAPI } from '../services/api';
 
 interface User {
   id: string;
@@ -20,12 +21,13 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(() => {
     const saved = localStorage.getItem('user');
-    return saved ? JSON.parse(saved) : {
-      id: '1',
-      name: 'John Doe',
-      email: 'john.doe@example.com',
-      avatar: 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=2'
-    };
+    const token = localStorage.getItem('auth_token');
+    
+    if (saved && token) {
+      return JSON.parse(saved);
+    }
+    
+    return null;
   });
 
   useEffect(() => {
@@ -35,19 +37,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [user]);
 
   const login = async (email: string, password: string) => {
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    setUser({
-      id: '1',
-      name: 'John Doe',
-      email,
-      avatar: 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=2'
-    });
+    try {
+      const response = await authAPI.login(email, password);
+      if (response.success) {
+        setUser({
+          ...response.data.user,
+          avatar: 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=2'
+        });
+      }
+      return response;
+    } catch (error) {
+      throw error;
+    }
   };
 
   const logout = () => {
+    authAPI.logout();
     setUser(null);
-    localStorage.removeItem('user');
   };
 
   const updateUser = (updates: Partial<User>) => {
