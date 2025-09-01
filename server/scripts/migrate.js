@@ -13,6 +13,8 @@ const createTables = async () => {
         name VARCHAR(255) NOT NULL,
         email VARCHAR(255) UNIQUE NOT NULL,
         password VARCHAR(255) NOT NULL,
+        phone VARCHAR(20),
+        address TEXT,
         created_at TIMESTAMP DEFAULT NOW(),
         updated_at TIMESTAMP DEFAULT NOW()
       );
@@ -29,7 +31,7 @@ const createTables = async () => {
         credit_limit NUMERIC(12,2) NOT NULL DEFAULT 0,
         outstanding_balance NUMERIC(12,2) NOT NULL DEFAULT 0,
         available_credit NUMERIC(12,2) GENERATED ALWAYS AS (credit_limit - outstanding_balance) STORED,
-        status VARCHAR(20) DEFAULT 'active',
+        status VARCHAR(20) DEFAULT 'active' CHECK (status IN ('active', 'blocked', 'suspended')),
         created_at TIMESTAMP DEFAULT NOW(),
         updated_at TIMESTAMP DEFAULT NOW()
       );

@@ -1,5 +1,8 @@
 import React, { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
+import { useToast } from '../hooks/useToast';
+import EditContactModal from '../components/ui/EditContactModal';
+import BlockCardModal from '../components/ui/BlockCardModal';
 import { 
   UserIcon, 
   EnvelopeIcon, 
@@ -15,11 +18,30 @@ import {
   CalendarDaysIcon
 } from '@heroicons/react/24/outline';
 import { useAuth } from '../hooks/useAuth';
+import clsx from 'clsx';
 
 export default function Profile() {
   const { user, updateUser } = useAuth();
+  const { showToast } = useToast();
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [showEditContactModal, setShowEditContactModal] = useState(false);
+  const [showBlockCardModal, setShowBlockCardModal] = useState(false);
+  
+  // Profile data state
+  const [profileData, setProfileData] = useState({
+    phone: '+91 98765 43210',
+    address: '123 Main Street, City, State 12345'
+  });
+  
+  // Card data state
+  const [cardData, setCardData] = useState({
+    id: '660e8400-e29b-41d4-a716-446655440000',
+    status: 'active' as 'active' | 'blocked' | 'suspended',
+    cardType: 'Platinum',
+    cardNumber: '****-****-****-9012'
+  });
+  
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -41,6 +63,11 @@ export default function Profile() {
       updateUser({ avatar: selectedImage });
       setSelectedImage(null);
       setIsUploading(false);
+      showToast({
+        type: 'success',
+        title: 'Photo Updated',
+        message: 'Your profile photo has been updated successfully'
+      });
     }
   };
 
@@ -49,6 +76,14 @@ export default function Profile() {
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
+  };
+
+  const handleContactUpdate = (phone: string, address: string) => {
+    setProfileData({ phone, address });
+  };
+
+  const handleCardStatusChange = (newStatus: 'active' | 'blocked' | 'suspended') => {
+    setCardData(prev => ({ ...prev, status: newStatus }));
   };
 
   return (
@@ -204,7 +239,8 @@ export default function Profile() {
                 </label>
                 <input
                   type="tel"
-                  defaultValue="+91 98765 43210"
+                  value={profileData.phone}
+                  readOnly
                   className="w-full px-3 py-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-slate-900 dark:text-white text-sm"
                 />
               </div>
@@ -226,7 +262,8 @@ export default function Profile() {
               </label>
               <textarea
                 rows={2}
-                defaultValue="123 Main Street, City, State 12345"
+                value={profileData.address}
+                readOnly
                 className="w-full px-3 py-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-slate-900 dark:text-white resize-none text-sm"
               />
             </div>
@@ -238,10 +275,11 @@ export default function Profile() {
                 Cancel
               </button>
               <button
+                onClick={() => setShowEditContactModal(true)}
                 type="submit"
                 className="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded transition-colors text-sm"
               >
-                Save Changes
+                Edit Contact Info
               </button>
             </div>
           </form>
@@ -287,6 +325,19 @@ export default function Profile() {
           <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-6">
             Quick Actions
           </h3>
+          
+          {/* Card Status Alert */}
+          {cardData.status === 'blocked' && (
+            <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+              <div className="flex items-center">
+                <ExclamationTriangleIcon className="w-5 h-5 text-red-600 dark:text-red-400 mr-2" />
+                <p className="text-sm font-medium text-red-800 dark:text-red-300">
+                  Your {cardData.cardType} card ({cardData.cardNumber}) is temporarily blocked
+                </p>
+              </div>
+            </div>
+          )}
+          
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             <button className="p-4 text-center rounded border border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors group">
               <div className="w-10 h-10 bg-primary-600 rounded mx-auto mb-3 flex items-center justify-center group-hover:bg-primary-700 transition-colors">
@@ -309,11 +360,26 @@ export default function Profile() {
               <span className="text-sm font-medium text-slate-900 dark:text-white">View Reports</span>
             </button>
             
-            <button className="p-4 text-center rounded border border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors group">
-              <div className="w-10 h-10 bg-red-600 rounded mx-auto mb-3 flex items-center justify-center group-hover:bg-red-700 transition-colors">
+            <button 
+              onClick={() => setShowBlockCardModal(true)}
+              className={clsx(
+                'p-4 text-center rounded border transition-colors group',
+                cardData.status === 'active'
+                  ? 'border-red-200 dark:border-red-800 hover:bg-red-50 dark:hover:bg-red-900/20'
+                  : 'border-green-200 dark:border-green-800 hover:bg-green-50 dark:hover:bg-green-900/20'
+              )}
+            >
+              <div className={clsx(
+                'w-10 h-10 rounded mx-auto mb-3 flex items-center justify-center transition-colors',
+                cardData.status === 'active'
+                  ? 'bg-red-600 group-hover:bg-red-700'
+                  : 'bg-green-600 group-hover:bg-green-700'
+              )}>
                 <CreditCardIcon className="w-5 h-5 text-white" />
               </div>
-              <span className="text-sm font-medium text-slate-900 dark:text-white">Block Card</span>
+              <span className="text-sm font-medium text-slate-900 dark:text-white">
+                {cardData.status === 'active' ? 'Block Card' : 'Unblock Card'}
+              </span>
             </button>
           </div>
         </motion.div>
@@ -391,6 +457,25 @@ export default function Profile() {
         </motion.div>
 
       </div>
+      
+      {/* Modals */}
+      <EditContactModal
+        isOpen={showEditContactModal}
+        onClose={() => setShowEditContactModal(false)}
+        currentPhone={profileData.phone}
+        currentAddress={profileData.address}
+        onSuccess={handleContactUpdate}
+      />
+      
+      <BlockCardModal
+        isOpen={showBlockCardModal}
+        onClose={() => setShowBlockCardModal(false)}
+        cardId={cardData.id}
+        currentStatus={cardData.status}
+        cardType={cardData.cardType}
+        cardNumber={cardData.cardNumber}
+        onSuccess={handleCardStatusChange}
+      />
     </div>
   );
 }

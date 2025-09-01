@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useTheme } from '../contexts/ThemeContext';
+import { useToast } from '../hooks/useToast';
+import EditContactModal from '../components/ui/EditContactModal';
+import ChangePasswordModal from '../components/ui/ChangePasswordModal';
+import BlockCardModal from '../components/ui/BlockCardModal';
 import {
   UserIcon,
   LockClosedIcon,
@@ -14,8 +18,27 @@ import {
 
 export default function Settings() {
   const { theme, toggleTheme } = useTheme();
-  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
-  const [showNewPassword, setShowNewPassword] = useState(false);
+  const { showToast } = useToast();
+  
+  // Modal states
+  const [showEditContactModal, setShowEditContactModal] = useState(false);
+  const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
+  const [showBlockCardModal, setShowBlockCardModal] = useState(false);
+  
+  // Profile data state
+  const [profileData, setProfileData] = useState({
+    phone: '+91 98765 43210',
+    address: '123 Main Street, City, State 12345'
+  });
+  
+  // Card data state
+  const [cardData, setCardData] = useState({
+    id: '660e8400-e29b-41d4-a716-446655440000',
+    status: 'active' as 'active' | 'blocked' | 'suspended',
+    cardType: 'Platinum',
+    cardNumber: '****-****-****-9012'
+  });
+  
   const [notifications, setNotifications] = useState({
     email: true,
     sms: false,
@@ -28,6 +51,18 @@ export default function Settings() {
       ...prev,
       [key]: !prev[key]
     }));
+  };
+
+  const handleContactUpdate = (phone: string, address: string) => {
+    setProfileData({ phone, address });
+  };
+
+  const handlePasswordChange = () => {
+    // Password changed successfully - could trigger additional actions if needed
+  };
+
+  const handleCardStatusChange = (newStatus: 'active' | 'blocked' | 'suspended') => {
+    setCardData(prev => ({ ...prev, status: newStatus }));
   };
 
   return (
@@ -59,7 +94,10 @@ export default function Settings() {
               Profile Management
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              <button className="p-4 text-left rounded border border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
+              <button 
+                onClick={() => setShowChangePasswordModal(true)}
+                className="p-4 text-left rounded border border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
+              >
                 <div className="flex items-center mb-2">
                   <LockClosedIcon className="w-5 h-5 text-primary-600 dark:text-primary-400 mr-2" />
                   <span className="font-medium text-slate-900 dark:text-white">Change Password</span>
@@ -67,7 +105,10 @@ export default function Settings() {
                 <p className="text-sm text-slate-600 dark:text-slate-400">Update your account password</p>
               </button>
               
-              <button className="p-4 text-left rounded border border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
+              <button 
+                onClick={() => setShowEditContactModal(true)}
+                className="p-4 text-left rounded border border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
+              >
                 <div className="flex items-center mb-2">
                   <UserIcon className="w-5 h-5 text-primary-600 dark:text-primary-400 mr-2" />
                   <span className="font-medium text-slate-900 dark:text-white">Edit Contact Info</span>
@@ -118,7 +159,8 @@ export default function Settings() {
                 </label>
                 <input
                   type="tel"
-                  defaultValue="+91 98765 43210"
+                  value={profileData.phone}
+                  readOnly
                   className="w-full px-4 py-3 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-slate-900 dark:text-white"
                 />
               </div>
@@ -132,6 +174,17 @@ export default function Settings() {
                   className="w-full px-4 py-3 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-slate-900 dark:text-white"
                 />
               </div>
+              <div className="sm:col-span-2">
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                  Address
+                </label>
+                <textarea
+                  rows={2}
+                  value={profileData.address}
+                  readOnly
+                  className="w-full px-4 py-3 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-slate-900 dark:text-white resize-none"
+                />
+              </div>
             </div>
           </div>
 
@@ -142,52 +195,26 @@ export default function Settings() {
               Security Settings
             </h3>
             <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                  Current Password
-                </label>
-                <div className="relative">
-                  <input
-                    type={showCurrentPassword ? 'text' : 'password'}
-                    placeholder="Enter current password"
-                    className="w-full px-4 py-3 pr-12 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-slate-900 dark:text-white"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
-                  >
-                    {showCurrentPassword ? (
-                      <EyeSlashIcon className="w-5 h-5" />
-                    ) : (
-                      <EyeIcon className="w-5 h-5" />
-                    )}
-                  </button>
+              <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-700/50 rounded">
+                <div className="flex items-center">
+                  <LockClosedIcon className="w-5 h-5 text-blue-600 dark:text-blue-400 mr-3" />
+                  <div>
+                    <p className="text-sm font-medium text-slate-900 dark:text-white">
+                      Password
+                    </p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                      Change your account password
+                    </p>
+                  </div>
                 </div>
+                <button 
+                  onClick={() => setShowChangePasswordModal(true)}
+                  className="px-4 py-2 bg-primary-600 text-white rounded hover:bg-primary-700 transition-colors text-sm"
+                >
+                  Change
+                </button>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                  New Password
-                </label>
-                <div className="relative">
-                  <input
-                    type={showNewPassword ? 'text' : 'password'}
-                    placeholder="Enter new password"
-                    className="w-full px-4 py-3 pr-12 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-slate-900 dark:text-white"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowNewPassword(!showNewPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
-                  >
-                    {showNewPassword ? (
-                      <EyeSlashIcon className="w-5 h-5" />
-                    ) : (
-                      <EyeIcon className="w-5 h-5" />
-                    )}
-                  </button>
-                </div>
-              </div>
+              
               <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-700/50 rounded">
                 <div className="flex items-center">
                   <ShieldCheckIcon className="w-5 h-5 text-green-600 dark:text-green-400 mr-3" />
@@ -289,15 +316,50 @@ export default function Settings() {
               <CreditCardIcon className="w-5 h-5 mr-2" />
               Card Management
             </h3>
+            
+            {/* Card Status Display */}
+            <div className="mb-4 p-3 rounded-lg bg-slate-50 dark:bg-slate-700/50">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-slate-900 dark:text-white">
+                    {cardData.cardType} Card
+                  </p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
+                    {cardData.cardNumber}
+                  </p>
+                </div>
+                <span className={clsx(
+                  'px-2 py-1 rounded text-xs font-medium',
+                  cardData.status === 'active' 
+                    ? 'bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300'
+                    : 'bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-300'
+                )}>
+                  {cardData.status === 'active' ? 'Active' : 'Blocked'}
+                </span>
+              </div>
+            </div>
+            
             <div className="space-y-3">
-              <button className="w-full text-left p-3 rounded hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
+              <button 
+                onClick={() => setShowBlockCardModal(true)}
+                className={clsx(
+                  'w-full text-left p-3 rounded transition-colors',
+                  cardData.status === 'active'
+                    ? 'hover:bg-red-50 dark:hover:bg-red-900/20 border border-red-200 dark:border-red-800'
+                    : 'hover:bg-green-50 dark:hover:bg-green-900/20 border border-green-200 dark:border-green-800'
+                )}
+              >
                 <p className="text-sm font-medium text-slate-900 dark:text-white">
-                  Block Card
+                  {cardData.status === 'active' ? 'Block Card' : 'Unblock Card'}
                 </p>
                 <p className="text-xs text-slate-500 dark:text-slate-400">
-                  Temporarily block your card
+                  {cardData.status === 'active' 
+                    ? 'Temporarily disable your card'
+                    : 'Reactivate your card for transactions'
+                  }
                 </p>
               </button>
+              
               <button className="w-full text-left p-3 rounded hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
                 <p className="text-sm font-medium text-slate-900 dark:text-white">
                   Change PIN
@@ -327,6 +389,31 @@ export default function Settings() {
           </motion.button>
         </motion.div>
       </div>
+      
+      {/* Modals */}
+      <EditContactModal
+        isOpen={showEditContactModal}
+        onClose={() => setShowEditContactModal(false)}
+        currentPhone={profileData.phone}
+        currentAddress={profileData.address}
+        onSuccess={handleContactUpdate}
+      />
+      
+      <ChangePasswordModal
+        isOpen={showChangePasswordModal}
+        onClose={() => setShowChangePasswordModal(false)}
+        onSuccess={handlePasswordChange}
+      />
+      
+      <BlockCardModal
+        isOpen={showBlockCardModal}
+        onClose={() => setShowBlockCardModal(false)}
+        cardId={cardData.id}
+        currentStatus={cardData.status}
+        cardType={cardData.cardType}
+        cardNumber={cardData.cardNumber}
+        onSuccess={handleCardStatusChange}
+      />
     </div>
   );
 }

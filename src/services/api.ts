@@ -239,9 +239,92 @@ export const healthAPI = {
   },
 };
 
+// Profile API
+export const profileAPI = {
+  getProfile: async () => {
+    try {
+      return await apiRequest('/profile');
+    } catch (error) {
+      console.error('Get profile error:', error);
+      // Return mock data for demo
+      return {
+        success: true,
+        data: {
+          id: '550e8400-e29b-41d4-a716-446655440000',
+          name: 'John Doe',
+          email: 'john.doe@example.com',
+          phone: '+91 98765 43210',
+          address: '123 Main Street, City, State 12345',
+          memberSince: '2020-01-01T00:00:00.000Z'
+        }
+      };
+    }
+  },
+
+  updateContact: async (phone: string, address: string) => {
+    try {
+      return await apiRequest('/profile/contact', {
+        method: 'PUT',
+        body: JSON.stringify({ phone, address }),
+      });
+    } catch (error) {
+      console.error('Update contact error:', error);
+      throw error;
+    }
+  },
+
+  changePassword: async (currentPassword: string, newPassword: string) => {
+    try {
+      return await apiRequest('/profile/password', {
+        method: 'PUT',
+        body: JSON.stringify({ currentPassword, newPassword }),
+      });
+    } catch (error) {
+      console.error('Change password error:', error);
+      throw error;
+    }
+  },
+};
+
+// Cards API
+export const cardsAPI = {
+  blockCard: async (cardId: string, action: 'block' | 'unblock') => {
+    try {
+      return await apiRequest(`/cards/${cardId}/block`, {
+        method: 'PUT',
+        body: JSON.stringify({ action }),
+      });
+    } catch (error) {
+      console.error('Block card error:', error);
+      throw error;
+    }
+  },
+
+  getCardStatus: async (cardId: string) => {
+    try {
+      return await apiRequest(`/cards/${cardId}/status`);
+    } catch (error) {
+      console.error('Get card status error:', error);
+      // Return mock data for demo
+      return {
+        success: true,
+        data: {
+          cardId: cardId,
+          status: 'active',
+          cardType: 'Platinum',
+          cardNumber: '****-****-****-9012',
+          lastUpdated: new Date().toISOString()
+        }
+      };
+    }
+  },
+};
+
 export default {
   auth: authAPI,
   accounts: accountsAPI,
   payments: paymentsAPI,
+  profile: profileAPI,
+  cards: cardsAPI,
   health: healthAPI,
 };
