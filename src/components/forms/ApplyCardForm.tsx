@@ -50,14 +50,15 @@ type FormData = z.infer<typeof schema>;
 
 interface ApplyCardFormProps {
   onSubmit: (data: FormData) => Promise<void>;
+  isSubmitting?: boolean;
 }
 
-export default function ApplyCardForm({ onSubmit }: ApplyCardFormProps) {
+export default function ApplyCardForm({ onSubmit, isSubmitting = false }: ApplyCardFormProps) {
   const {
     register,
     control,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
     watch,
   } = useForm<FormData>({
     resolver: zodResolver(schema),

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import StatCard from '../components/ui/StatCard';
 import TransactionsTable from '../components/tables/TransactionsTable';
@@ -133,8 +133,10 @@ export default function Dashboard() {
   const [showBlockCardModal, setShowBlockCardModal] = useState(false);
   const [showRewardsModal, setShowRewardsModal] = useState(false);
   const [showPayBillModal, setShowPayBillModal] = useState(false);
+  const [showApplicationSuccess, setShowApplicationSuccess] = useState(false);
   
   const navigate = useNavigate();
+  const location = useLocation();
   const { getCardStatus } = useCards();
   const { showToast } = useToast();
   
@@ -142,6 +144,27 @@ export default function Dashboard() {
   const totalPages = Math.ceil(mockTransactions.length / transactionsPerPage);
   const minimumDue = 2266;
   const demoAccountId = '660e8400-e29b-41d4-a716-446655440000';
+
+  // Check if coming from successful application
+  React.useEffect(() => {
+    if (location.state?.fromApplication && location.state?.applicationSuccess) {
+      setShowApplicationSuccess(true);
+      showToast({
+        type: 'success',
+        title: 'Welcome to CreditFlow!',
+        message: 'Your credit card application has been approved. Explore your new dashboard below.',
+        duration: 8000
+      });
+      
+      // Clear the state to prevent showing again on refresh
+      window.history.replaceState({}, document.title);
+      
+      // Auto-hide the highlight after 10 seconds
+      setTimeout(() => {
+        setShowApplicationSuccess(false);
+      }, 10000);
+    }
+  }, [location.state, showToast]);
 
   // Check card status on component mount
   React.useEffect(() => {
@@ -254,8 +277,34 @@ export default function Dashboard() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
-        className="bg-white dark:bg-slate-800 rounded p-6 sm:p-8 shadow-sm border border-slate-200 dark:border-slate-700"
+        className={clsx(
+          'rounded p-6 sm:p-8 shadow-sm border transition-all duration-500',
+          showApplicationSuccess
+            ? 'bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 border-green-200 dark:border-green-700 ring-2 ring-green-200 dark:ring-green-700'
+            : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700'
+        )}
       >
+        {/* Application Success Banner */}
+        {showApplicationSuccess && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-6 p-4 bg-green-100 dark:bg-green-900/30 border border-green-200 dark:border-green-700 rounded-lg"
+          >
+            <div className="flex items-center">
+              <CheckCircleIcon className="w-6 h-6 text-green-600 dark:text-green-400 mr-3" />
+              <div>
+                <p className="text-sm font-semibold text-green-800 dark:text-green-300">
+                  🎉 Credit Card Application Approved!
+                </p>
+                <p className="text-xs text-green-600 dark:text-green-400 mt-1">
+                  Your new Platinum card is being processed. Explore your dashboard features below.
+                </p>
+              </div>
+            </div>
+          </motion.div>
+        )}
+        
         {/* Card Status Alert */}
         {cardStatus === 'blocked' && (
           <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
