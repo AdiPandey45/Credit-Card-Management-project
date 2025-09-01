@@ -1,4 +1,4 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || '';
 
 // Get auth token from localStorage
 const getAuthToken = () => {
@@ -19,20 +19,54 @@ const apiRequest = async (endpoint: string, options: RequestInit = {}) => {
   };
 
   try {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
-    
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({ message: 'Network error' }));
-      throw new Error(error.message || `HTTP ${response.status}`);
-    }
-
-    return response.json();
+    // For demo purposes, return mock data instead of making actual API calls
+    throw new Error('API_MOCK_MODE');
   } catch (error) {
+    // Return mock data for demo mode
+    if (error.message === 'API_MOCK_MODE') {
+      return getMockResponse(endpoint, options);
+    }
     console.error('API request failed:', error);
     throw error;
   }
 };
 
+// Mock response generator
+const getMockResponse = (endpoint: string, options: RequestInit = {}) => {
+  // Mock responses for different endpoints
+  if (endpoint.includes('/cards/') && endpoint.includes('/status')) {
+    return {
+      success: true,
+      data: {
+        cardId: '660e8400-e29b-41d4-a716-446655440000',
+        status: 'active',
+        cardType: 'Platinum',
+        cardNumber: '****-****-****-9012',
+        lastUpdated: new Date().toISOString()
+      }
+    };
+  }
+  
+  if (endpoint.includes('/cards/') && endpoint.includes('/block')) {
+    const body = JSON.parse(options.body as string || '{}');
+    return {
+      success: true,
+      message: `Card ${body.action === 'block' ? 'blocked' : 'unblocked'} successfully`,
+      data: {
+        cardId: '660e8400-e29b-41d4-a716-446655440000',
+        status: body.action === 'block' ? 'blocked' : 'active',
+        lastUpdated: new Date().toISOString()
+      }
+    };
+  }
+  
+  // Default mock response
+  return {
+    success: true,
+    data: {},
+    message: 'Mock response'
+  };
+};
 // Authentication API
 export const authAPI = {
   login: async (email: string, password: string) => {
