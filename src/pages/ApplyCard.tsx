@@ -56,6 +56,9 @@ export default function ApplyCard() {
   const handleGoToDashboard = async () => {
     setIsRedirecting(true);
     
+    // Mark user as no longer new to prevent redirect loop
+    localStorage.removeItem('isNewUser');
+    
     showToast({
       type: 'info',
       title: 'Redirecting to Dashboard',

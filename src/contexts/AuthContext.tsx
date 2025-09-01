@@ -61,9 +61,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
     try {
       setIsLoading(true);
       
-      // Check if this is a new user
-      const isNewUser = localStorage.getItem('isNewUser') === 'true';
-      setIsNewUser(isNewUser);
+      // For existing users logging in, they are not new users
+      setIsNewUser(false);
       
       // For demo purposes, allow login with any credentials
       const mockResponse = {
@@ -72,9 +71,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
           token: 'demo_jwt_token_' + Date.now(),
           user: {
             id: '550e8400-e29b-41d4-a716-446655440000',
-            name: isNewUser ? 'New User' : 'John Doe',
+            name: 'John Doe',
             email: email,
-            isNewUser
+            isNewUser: false
           }
         }
       };

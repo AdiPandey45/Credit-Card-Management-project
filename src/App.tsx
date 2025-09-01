@@ -46,9 +46,9 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
     return <Navigate to="/login" replace />;
   }
 
-  // Redirect new users to apply page
+  // Redirect new users to apply page (but not if they're already on apply page)
   React.useEffect(() => {
-    if (isAuthenticated && isNewUser && !window.location.pathname.includes('/apply')) {
+    if (isAuthenticated && isNewUser && window.location.pathname !== '/apply') {
       navigate('/apply', { replace: true });
     }
   }, [isAuthenticated, isNewUser, navigate]);
