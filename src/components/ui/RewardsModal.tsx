@@ -134,7 +134,7 @@ export default function RewardsModal({ isOpen, onClose }: RewardsModalProps) {
                       <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl p-6 text-white">
                         <div className="flex items-center justify-between mb-2">
                           <StarIcon className="w-8 h-8" />
-                          <span className="text-2xl font-bold">{rewardsData.availablePoints.toLocaleString()}</span>
+                          <span className="text-2xl font-bold">{rewardsData.availablePoints?.toLocaleString() || '0'}</span>
                         </div>
                         <p className="text-blue-100">Available Points</p>
                       </div>
@@ -142,7 +142,7 @@ export default function RewardsModal({ isOpen, onClose }: RewardsModalProps) {
                       <div className="bg-gradient-to-r from-green-500 to-teal-600 rounded-xl p-6 text-white">
                         <div className="flex items-center justify-between mb-2">
                           <TrophyIcon className="w-8 h-8" />
-                          <span className="text-2xl font-bold">{rewardsData.totalPoints.toLocaleString()}</span>
+                          <span className="text-2xl font-bold">{rewardsData.totalPoints?.toLocaleString() || '0'}</span>
                         </div>
                         <p className="text-green-100">Total Earned</p>
                       </div>
@@ -150,7 +150,7 @@ export default function RewardsModal({ isOpen, onClose }: RewardsModalProps) {
                       <div className="bg-gradient-to-r from-orange-500 to-red-600 rounded-xl p-6 text-white">
                         <div className="flex items-center justify-between mb-2">
                           <GiftIcon className="w-8 h-8" />
-                          <span className="text-2xl font-bold">{rewardsData.redeemedPoints.toLocaleString()}</span>
+                          <span className="text-2xl font-bold">{rewardsData.redeemedPoints?.toLocaleString() || '0'}</span>
                         </div>
                         <p className="text-orange-100">Redeemed</p>
                       </div>
