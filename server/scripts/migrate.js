@@ -72,6 +72,35 @@ const createTables = async () => {
     `);
     console.log('✅ Transactions table created');
 
+    // Create reward_transactions table
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS reward_transactions (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        transaction_type VARCHAR(20) NOT NULL CHECK (transaction_type IN ('earning', 'redemption')),
+        points_earned INTEGER DEFAULT 0,
+        points_redeemed INTEGER DEFAULT 0,
+        description TEXT,
+        redemption_id VARCHAR(255),
+        reward_type VARCHAR(50),
+        reward_value NUMERIC(12,2),
+        created_at TIMESTAMP DEFAULT NOW()
+      );
+    `);
+    console.log('✅ Reward transactions table created');
+
+    // Insert demo reward transactions
+    await client.query(`
+      INSERT INTO reward_transactions (user_id, transaction_type, points_earned, description)
+      VALUES 
+        ('550e8400-e29b-41d4-a716-446655440000', 'earning', 2340, 'Earned from Amazon purchase - 1 point per ₹100'),
+        ('550e8400-e29b-41d4-a716-446655440000', 'earning', 480, 'Earned from Swiggy order - 1 point per ₹100'),
+        ('550e8400-e29b-41d4-a716-446655440000', 'earning', 1560, 'Earned from Flipkart purchase - 1 point per ₹100'),
+        ('550e8400-e29b-41d4-a716-446655440000', 'earning', 8500, 'Bonus points for premium member'),
+        ('550e8400-e29b-41d4-a716-446655440000', 'redemption', 0, 'Redeemed ₹500 cashback', 'RDM_DEMO_001', 'cashback', 500)
+      ON CONFLICT DO NOTHING;
+    `);
+
     // Insert demo data
     console.log('📝 Inserting demo data...');
 

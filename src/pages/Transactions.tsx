@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import TransactionsTable, { PaginationControls } from '../components/tables/TransactionsTable';
-import { MagnifyingGlassIcon, FunnelIcon, CalendarDaysIcon } from '@heroicons/react/24/outline';
+import PayBillModal from '../components/ui/PayBillModal';
+import { MagnifyingGlassIcon, FunnelIcon, CalendarDaysIcon, BanknotesIcon } from '@heroicons/react/24/outline';
+import { useToast } from '../hooks/useToast';
 
 // Extended mock data for better pagination demonstration
 const allMockTransactions = [
@@ -156,6 +159,8 @@ const allMockTransactions = [
 ];
 
 export default function Transactions() {
+  const location = useLocation();
+  const { showToast } = useToast();
   const [currentPage, setCurrentPage] = useState(() => {
     const saved = sessionStorage.getItem('transactions-page');
     return saved ? parseInt(saved) : 1;
@@ -170,6 +175,9 @@ export default function Transactions() {
   const [dateRange, setDateRange] = useState(() => {
     return sessionStorage.getItem('transactions-date-range') || 'all';
   });
+  const [showPayBillModal, setShowPayBillModal] = useState(false);
+  const [outstandingBalance, setOutstandingBalance] = useState(45320);
+  const minimumDue = 2266;
 
   const transactionsPerPage = 8;
 
@@ -269,6 +277,26 @@ export default function Transactions() {
 
   const hasActiveFilters = searchTerm || selectedCategory !== 'all' || dateRange !== 'all';
 
+  // Check if coming from dashboard quick action
+  React.useEffect(() => {
+    if (location.state?.fromQuickAction) {
+      showToast({
+        type: 'info',
+        title: 'Transaction History',
+        message: 'Here are all your recent transactions and statements'
+      });
+    }
+  }, [location.state, showToast]);
+
+  const handlePaymentSuccess = (newBalance: number) => {
+    setOutstandingBalance(newBalance);
+    showToast({
+      type: 'success',
+      title: 'Payment Successful',
+      message: 'Your outstanding balance has been updated'
+    });
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -288,7 +316,16 @@ export default function Transactions() {
         <motion.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
+          onClick={() => setShowPayBillModal(true)}
           className="px-4 py-2 bg-primary-600 text-white rounded hover:bg-primary-700 transition-colors flex items-center space-x-2 text-sm shadow-sm"
+        >
+          <BanknotesIcon className="w-4 h-4" />
+          <span>Pay Now</span>
+        </motion.button>
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className="px-4 py-2 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 rounded hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors flex items-center space-x-2 text-sm"
         >
           <CalendarDaysIcon className="w-4 h-4" />
           <span>Export CSV</span>
@@ -405,6 +442,15 @@ export default function Transactions() {
           hasActiveFilters={hasActiveFilters}
         />
       </motion.div>
+      
+      {/* Pay Bill Modal */}
+      <PayBillModal
+        isOpen={showPayBillModal}
+        onClose={() => setShowPayBillModal(false)}
+        outstandingBalance={outstandingBalance}
+        minimumDue={minimumDue}
+        onPaymentSuccess={handlePaymentSuccess}
+      />
     </div>
   );
 }

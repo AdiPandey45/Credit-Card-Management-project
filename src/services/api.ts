@@ -320,11 +320,88 @@ export const cardsAPI = {
   },
 };
 
+// Rewards API
+export const rewardsAPI = {
+  getRewards: async () => {
+    try {
+      return await apiRequest('/rewards');
+    } catch (error) {
+      console.error('Get rewards error:', error);
+      // Return mock data for demo
+      return {
+        success: true,
+        data: {
+          totalPoints: 15750,
+          redeemedPoints: 3170,
+          availablePoints: 12580,
+          nextMilestone: 25000,
+          pointsToNext: 12420,
+          recentTransactions: [
+            {
+              id: '1',
+              transaction_type: 'earning',
+              points_earned: 250,
+              description: 'Earned from Amazon purchase',
+              created_at: '2024-01-15T10:30:00Z'
+            },
+            {
+              id: '2',
+              transaction_type: 'earning',
+              points_earned: 480,
+              description: 'Earned from dining at restaurant',
+              created_at: '2024-01-14T19:45:00Z'
+            }
+          ],
+          redeemableOffers: [
+            {
+              id: 'cashback-500',
+              title: '₹500 Cashback',
+              description: 'Direct cashback to your account',
+              pointsRequired: 5000,
+              type: 'cashback',
+              value: 500
+            },
+            {
+              id: 'bill-discount-1000',
+              title: '₹1000 Bill Discount',
+              description: 'Apply as discount to your next bill',
+              pointsRequired: 10000,
+              type: 'bill_discount',
+              value: 1000
+            },
+            {
+              id: 'cashback-2500',
+              title: '₹2500 Cashback',
+              description: 'Premium cashback reward',
+              pointsRequired: 25000,
+              type: 'cashback',
+              value: 2500
+            }
+          ]
+        }
+      };
+    }
+  },
+
+  redeemReward: async (offerId: string, pointsRequired: number, rewardType: string, rewardValue: number) => {
+    try {
+      return await apiRequest('/rewards/redeem', {
+        method: 'POST',
+        body: JSON.stringify({ offerId, pointsRequired, rewardType, rewardValue }),
+      });
+    } catch (error) {
+      console.error('Redeem reward error:', error);
+      throw error;
+    }
+  },
+};
+
 export default {
   auth: authAPI,
   accounts: accountsAPI,
   payments: paymentsAPI,
   profile: profileAPI,
   cards: cardsAPI,
+  rewards: rewardsAPI,
   health: healthAPI,
 };

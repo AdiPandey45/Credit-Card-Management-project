@@ -1,13 +1,21 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import StatCard from '../components/ui/StatCard';
 import TransactionsTable from '../components/tables/TransactionsTable';
+import BlockCardModal from '../components/ui/BlockCardModal';
+import RewardsModal from '../components/ui/RewardsModal';
+import PayBillModal from '../components/ui/PayBillModal';
+import { useCards } from '../hooks/useCards';
+import { useToast } from '../hooks/useToast';
 import {
   CreditCardIcon,
   BanknotesIcon,
   GiftIcon,
   ChartBarSquareIcon,
+  ExclamationTriangleIcon,
 } from '@heroicons/react/24/outline';
+import clsx from 'clsx';
 
 // Mock data
 const stats = [
@@ -120,8 +128,36 @@ const mockTransactions = [
 
 export default function Dashboard() {
   const [currentPage, setCurrentPage] = useState(1);
+  const [outstandingBalance, setOutstandingBalance] = useState(45320);
+  const [cardStatus, setCardStatus] = useState<'active' | 'blocked' | 'suspended'>('active');
+  const [showBlockCardModal, setShowBlockCardModal] = useState(false);
+  const [showRewardsModal, setShowRewardsModal] = useState(false);
+  const [showPayBillModal, setShowPayBillModal] = useState(false);
+  
+  const navigate = useNavigate();
+  const { getCardStatus } = useCards();
+  const { showToast } = useToast();
+  
   const transactionsPerPage = 5;
   const totalPages = Math.ceil(mockTransactions.length / transactionsPerPage);
+  const minimumDue = 2266;
+  const demoAccountId = '660e8400-e29b-41d4-a716-446655440000';
+
+  // Check card status on component mount
+  React.useEffect(() => {
+    const checkCardStatus = async () => {
+      try {
+        const status = await getCardStatus(demoAccountId);
+        if (status) {
+          setCardStatus(status.status);
+        }
+      } catch (error) {
+        console.error('Failed to fetch card status:', error);
+      }
+    };
+    
+    checkCardStatus();
+  }, [getCardStatus]);
   
   const getCurrentTransactions = () => {
     const startIndex = (currentPage - 1) * transactionsPerPage;
@@ -131,6 +167,43 @@ export default function Dashboard() {
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
+  };
+
+  const handleCardStatusChange = (newStatus: 'active' | 'blocked' | 'suspended') => {
+    setCardStatus(newStatus);
+  };
+
+  const handlePaymentSuccess = (newBalance: number) => {
+    setOutstandingBalance(newBalance);
+    // Update the stats to reflect new balance
+    stats[1].value = newBalance; // Outstanding Balance stat
+  };
+
+  const handleQuickAction = (actionName: string) => {
+    switch (actionName) {
+      case 'Pay Bill':
+        setShowPayBillModal(true);
+        break;
+      case 'View Statement':
+        navigate('/transactions');
+        break;
+      case 'Block Card':
+        if (cardStatus === 'blocked') {
+          showToast({
+            type: 'info',
+            title: 'Card Already Blocked',
+            message: 'Your card is already temporarily blocked'
+          });
+        } else {
+          setShowBlockCardModal(true);
+        }
+        break;
+      case 'Rewards':
+        setShowRewardsModal(true);
+        break;
+      default:
+        break;
+    }
   };
 
   return (
@@ -183,28 +256,86 @@ export default function Dashboard() {
         transition={{ delay: 0.3 }}
         className="bg-white dark:bg-slate-800 rounded p-6 sm:p-8 shadow-sm border border-slate-200 dark:border-slate-700"
       >
+        {/* Card Status Alert */}
+        {cardStatus === 'blocked' && (
+          <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+            <div className="flex items-center">
+              <ExclamationTriangleIcon className="w-5 h-5 text-red-600 dark:text-red-400 mr-2" />
+              <div>
+                <p className="text-sm font-medium text-red-800 dark:text-red-300">
+                  Your card is temporarily blocked
+                </p>
+                <p className="text-xs text-red-600 dark:text-red-400 mt-1">
+                  Some services may be unavailable until you unblock your card
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+        
         <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-6">
           Quick Actions
         </h3>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6">
           {[
-            { name: 'Pay Bill', icon: BanknotesIcon, color: 'bg-success-500' },
-            { name: 'View Statement', icon: ChartBarSquareIcon, color: 'bg-primary-500' },
-            { name: 'Block Card', icon: CreditCardIcon, color: 'bg-error-500' },
-            { name: 'Rewards', icon: GiftIcon, color: 'bg-warning-500' },
-          ].map((action) => (
+            { 
+              name: 'Pay Bill', 
+              icon: BanknotesIcon, 
+              color: 'bg-green-500',
+              disabled: cardStatus === 'blocked'
+            },
+            { 
+              name: 'View Statement', 
+              icon: ChartBarSquareIcon, 
+              color: 'bg-blue-500',
+              disabled: false
+            },
+            { 
+              name: 'Block Card', 
+              icon: CreditCardIcon, 
+              color: cardStatus === 'blocked' ? 'bg-green-500' : 'bg-red-500',
+              disabled: false,
+              label: cardStatus === 'blocked' ? 'Unblock Card' : 'Block Card'
+            },
+            { 
+              name: 'Rewards', 
+              icon: GiftIcon, 
+              color: 'bg-yellow-500',
+              disabled: false
+            },
+          ].map((action, index) => (
             <motion.button
               key={action.name}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 + index * 0.1 }}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.95 }}
-              className="p-4 sm:p-6 rounded bg-slate-50 dark:bg-slate-700/50 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors text-center group"
+              onClick={() => handleQuickAction(action.name)}
+              disabled={action.disabled}
+              className={clsx(
+                'p-4 sm:p-6 rounded transition-colors text-center group relative',
+                action.disabled
+                  ? 'bg-slate-100 dark:bg-slate-700/30 opacity-50 cursor-not-allowed'
+                  : 'bg-slate-50 dark:bg-slate-700/50 hover:bg-slate-100 dark:hover:bg-slate-700'
+              )}
             >
-              <div className={`w-10 sm:w-12 lg:w-14 h-10 sm:h-12 lg:h-14 ${action.color} rounded flex items-center justify-center mx-auto mb-3 group-hover:scale-105 transition-transform`}>
+              <div className={clsx(
+                'w-10 sm:w-12 lg:w-14 h-10 sm:h-12 lg:h-14 rounded flex items-center justify-center mx-auto mb-3 transition-transform',
+                action.disabled ? 'bg-slate-400' : `${action.color} group-hover:scale-105`
+              )}>
                 <action.icon className="w-5 sm:w-6 lg:w-7 h-5 sm:h-6 lg:h-7 text-white" />
               </div>
               <span className="text-sm sm:text-base font-medium text-slate-700 dark:text-slate-300">
-                {action.name}
+                {action.label || action.name}
               </span>
+              {action.disabled && (
+                <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-10 rounded">
+                  <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+                    Card Blocked
+                  </span>
+                </div>
+              )}
             </motion.button>
           ))}
         </div>
@@ -223,6 +354,30 @@ export default function Dashboard() {
           currentPage={currentPage}
         />
       </motion.div>
+      
+      {/* Modals */}
+      <BlockCardModal
+        isOpen={showBlockCardModal}
+        onClose={() => setShowBlockCardModal(false)}
+        cardId={demoAccountId}
+        currentStatus={cardStatus}
+        cardType="Platinum"
+        cardNumber="****-****-****-9012"
+        onSuccess={handleCardStatusChange}
+      />
+      
+      <RewardsModal
+        isOpen={showRewardsModal}
+        onClose={() => setShowRewardsModal(false)}
+      />
+      
+      <PayBillModal
+        isOpen={showPayBillModal}
+        onClose={() => setShowPayBillModal(false)}
+        outstandingBalance={outstandingBalance}
+        minimumDue={minimumDue}
+        onPaymentSuccess={handlePaymentSuccess}
+      />
     </div>
   );
 }

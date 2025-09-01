@@ -68,6 +68,7 @@ const accountsRoutes = require('./routes/accounts');
 const paymentsRoutes = require('./routes/payments');
 const profileRoutes = require('./routes/profile');
 const cardsRoutes = require('./routes/cards');
+const rewardsRoutes = require('./routes/rewards');
 
 // Use route modules
 app.use('/api/auth', authRoutes);
@@ -75,6 +76,7 @@ app.use('/api/accounts', accountsRoutes);
 app.use('/api/payments', paymentsRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/cards', cardsRoutes);
+app.use('/api/rewards', rewardsRoutes);
 
 app.post('/api/payments', (req, res) => {
   const { accountId, amount, method } = req.body;
