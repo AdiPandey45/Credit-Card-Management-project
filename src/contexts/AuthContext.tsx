@@ -163,6 +163,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   };
 
+  const markUserAsExisting = () => {
+    setIsNewUser(false);
+    localStorage.removeItem('isNewUser');
+    if (user) {
+      const updatedUser = { ...user, isNewUser: false };
+      setUser(updatedUser);
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+    }
+  };
+
   const contextValue = {
     user,
     isNewUser,
@@ -171,6 +181,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     register,
     logout,
     updateUser,
+    markUserAsExisting,
     isLoading,
   };
 

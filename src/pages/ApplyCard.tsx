@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import ApplyCardForm from '../components/forms/ApplyCardForm';
 import { useToast } from '../hooks/useToast';
+import { useAuth } from '../contexts/AuthContext';
 import { CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/outline';
 
 const ctaMessages = {
@@ -21,6 +22,7 @@ export default function ApplyCard() {
   const [isRedirecting, setIsRedirecting] = useState(false);
   const navigate = useNavigate();
   const { showToast } = useToast();
+  const { markUserAsExisting } = useAuth();
 
   const handleSubmit = async (data: any) => {
     setIsSubmitting(true);
@@ -56,8 +58,8 @@ export default function ApplyCard() {
   const handleGoToDashboard = async () => {
     setIsRedirecting(true);
     
-    // Mark user as no longer new to prevent redirect loop
-    localStorage.removeItem('isNewUser');
+    // Mark user as existing to prevent redirect loop
+    markUserAsExisting();
     
     showToast({
       type: 'info',

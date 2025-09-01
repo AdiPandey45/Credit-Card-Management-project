@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
@@ -40,18 +40,19 @@ function AppWithToast() {
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isNewUser, isLoading } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   // Redirect to login if not authenticated
   if (!isAuthenticated && !isLoading) {
     return <Navigate to="/login" replace />;
   }
 
-  // Redirect new users to apply page (but not if they're already on apply page)
+  // Redirect new users to apply page (but not if they're already on apply page or coming from application)
   React.useEffect(() => {
-    if (isAuthenticated && isNewUser && window.location.pathname !== '/apply') {
+    if (isAuthenticated && isNewUser && location.pathname !== '/apply' && !location.state?.fromApplication) {
       navigate('/apply', { replace: true });
     }
-  }, [isAuthenticated, isNewUser, navigate]);
+  }, [isAuthenticated, isNewUser, navigate, location.pathname, location.state]);
 
   return <>{children}</>;
 }
