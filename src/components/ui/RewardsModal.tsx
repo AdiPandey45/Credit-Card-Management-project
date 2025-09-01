@@ -188,7 +188,7 @@ export default function RewardsModal({ isOpen, onClose }: RewardsModalProps) {
                         Redeemable Offers
                       </h4>
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {rewardsData.redeemableOffers.map((offer: any) => {
+                        {rewardsData.redeemableOffers?.map((offer: any) => {
                           const canRedeem = rewardsData.availablePoints >= offer.pointsRequired;
                           return (
                             <motion.div
@@ -246,7 +246,11 @@ export default function RewardsModal({ isOpen, onClose }: RewardsModalProps) {
                               </button>
                             </motion.div>
                           );
-                        })}
+                        }) || (
+                          <div className="col-span-full text-center py-8 text-slate-500 dark:text-slate-400">
+                            <p>No offers available</p>
+                          </div>
+                        )}
                       </div>
                     </div>
 
@@ -256,7 +260,7 @@ export default function RewardsModal({ isOpen, onClose }: RewardsModalProps) {
                         Recent Activity
                       </h4>
                       <div className="space-y-3 max-h-60 overflow-y-auto">
-                        {rewardsData.recentTransactions.map((transaction: any) => (
+                        {rewardsData.recentTransactions?.map((transaction: any) => (
                           <div
                             key={transaction.id}
                             className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg"
@@ -293,7 +297,11 @@ export default function RewardsModal({ isOpen, onClose }: RewardsModalProps) {
                               {transaction.points_earned || transaction.points_redeemed} pts
                             </div>
                           </div>
-                        ))}
+                        )) || (
+                          <div className="text-center py-8 text-slate-500 dark:text-slate-400">
+                            <p>No recent transactions</p>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
