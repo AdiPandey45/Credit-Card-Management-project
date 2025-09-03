@@ -75,7 +75,7 @@ model Statement {
   card      Card     @relation(fields: [cardId], references: [id])
   cardId    Int
   month     Int
-  year      Int
+  year     Int
   dueDate   DateTime
   balance   Float
   createdAt DateTime @default(now())
