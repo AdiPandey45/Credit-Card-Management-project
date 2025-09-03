@@ -4,6 +4,7 @@ import prisma from '../prisma';
 import { logger } from '../utils/logger';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'secret';
+const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'refresh-secret';
 
 export interface AuthRequest extends Request {
   userId?: number;
