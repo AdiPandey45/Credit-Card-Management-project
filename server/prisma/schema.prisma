@@ -1,0 +1,134 @@
+// Prisma schema for Credit Card Management System
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id            Int               @id @default(autoincrement())
+  email         String            @unique
+  password      String? //nullable will drop later (11:05am 21 aug)
+  passwordHash  String?
+  name          String
+  twoFASecret   String?
+  alertSettings Json?
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  cards         Card[]
+  applications  CardApplication[]
+  transactions  Transaction[]
+  payments      Payment[]
+  rewards       Reward[]
+  offers        Offer[]
+  disputes      Dispute[]
+  notifications Notification[]
+}
+
+model CardApplication {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  fullName  String
+  email     String
+  pan       String
+  income    Int
+  product   String
+  document  String?
+  status    String   @default("PENDING")
+  createdAt DateTime @default(now())
+}
+
+model Card {
+  id             Int           @id @default(autoincrement())
+  user           User          @relation(fields: [userId], references: [id])
+  userId         Int
+  number         String        @unique
+  status         String        @default("INACTIVE") // ACTIVE/BLOCKED
+  autopayEnabled Boolean       @default(false)
+  createdAt      DateTime      @default(now())
+  transactions   Transaction[]
+  statements     Statement[]
+  payments       Payment[]
+  rewards        Reward[]
+}
+
+model Transaction {
+  id       Int       @id @default(autoincrement())
+  card     Card      @relation(fields: [cardId], references: [id])
+  cardId   Int
+  amount   Float
+  merchant String
+  date     DateTime  @default(now())
+  status   String    @default("SUCCESS")
+  disputes Dispute[]
+  user     User      @relation(fields: [userId], references: [id])
+  userId   Int
+}
+
+model Statement {
+  id        Int      @id @default(autoincrement())
+  card      Card     @relation(fields: [cardId], references: [id])
+  cardId    Int
+  month     Int
+  year      Int
+  dueDate   DateTime
+  balance   Float
+  createdAt DateTime @default(now())
+}
+
+model Payment {
+  id     Int      @id @default(autoincrement())
+  card   Card     @relation(fields: [cardId], references: [id])
+  cardId Int
+  amount Float
+  method String
+  date   DateTime @default(now())
+  status String   @default("PENDING")
+  user   User     @relation(fields: [userId], references: [id])
+  userId Int
+}
+
+model Reward {
+  id        Int      @id @default(autoincrement())
+  card      Card     @relation(fields: [cardId], references: [id])
+  cardId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  points    Int      @default(0)
+  updatedAt DateTime @updatedAt
+}
+
+model Dispute {
+  id            Int         @id @default(autoincrement())
+  transaction   Transaction @relation(fields: [transactionId], references: [id])
+  transactionId Int
+  user          User        @relation(fields: [userId], references: [id])
+  userId        Int
+  reason        String
+  status        String      @default("OPEN")
+  createdAt     DateTime    @default(now())
+}
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  type      String
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model Offer {
+  id          Int      @id @default(autoincrement())
+  user        User?    @relation(fields: [userId], references: [id])
+  userId      Int?
+  title       String
+  description String
+  createdAt   DateTime @default(now())
+}
