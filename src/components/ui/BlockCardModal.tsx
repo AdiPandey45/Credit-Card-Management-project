@@ -135,6 +135,10 @@ export default function BlockCardModal({
                     disabled={isLoading}
                     className="p-2 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
                   >
+                    <XMarkIcon className="w-5 h-5" />
+                  </button>
+                </div>
+
                 <div className="text-center mb-6">
                   <div className={`w-16 h-16 ${actionConfig.iconBg} rounded-full flex items-center justify-center mx-auto mb-4`}>
                     <actionConfig.icon className={`w-8 h-8 ${actionConfig.iconColor}`} />
@@ -148,7 +152,6 @@ export default function BlockCardModal({
                       {cardNumber}
                     </p>
                   </div>
-                    <XMarkIcon className="w-5 h-5" />
                   <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">
                     {actionConfig.description}
                   </p>
@@ -156,14 +159,15 @@ export default function BlockCardModal({
                   <p className="text-sm font-medium text-slate-900 dark:text-white mb-4">
                     {actionConfig.confirmText}
                   </p>
-                  </button>
-                  {/* General Error */}
-                  {error && (
-                    <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg mb-4">
-                      <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
-                    </div>
-                  )}
                 </div>
+
+                {/* General Error */}
+                {error && (
+                  <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg mb-4">
+                    <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+                  </div>
+                )}
+
                 </div>
                 {/* Action Buttons */}
                 <div className="flex space-x-3">
