@@ -168,7 +168,6 @@ export default function BlockCardModal({
                   </div>
                 )}
 
-                </div>
                 {/* Action Buttons */}
                 <div className="flex space-x-3">
                   <button
