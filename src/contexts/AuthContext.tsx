@@ -16,6 +16,7 @@ type AuthContextType = {
   register: (name: string, email: string, password: string) => Promise<void>;
   logout: () => void;
   updateUser: (updates: Partial<User>) => void;
+  markUserAsExisting: () => void;            // ❗ added so Provider value matches the type
   isLoading: boolean;
 };
 
@@ -36,19 +37,23 @@ export function AuthProvider({ children }: AuthProviderProps) {
       try {
         const savedUser = localStorage.getItem('user');
         const token = localStorage.getItem('auth_token');
-        
+
         if (savedUser && token) {
-          const parsedUser = JSON.parse(savedUser);
+          const parsedUser = JSON.parse(savedUser) as User;
           setUser({
             ...parsedUser,
-            avatar: parsedUser.avatar || 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=2'
+            avatar:
+              parsedUser.avatar ||
+              'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=2',
           });
+          setIsNewUser(!!parsedUser.isNewUser || localStorage.getItem('isNewUser') === 'true');
         }
       } catch (error) {
         console.error('Error initializing auth:', error);
         // Clear corrupted data
         localStorage.removeItem('user');
         localStorage.removeItem('auth_token');
+        localStorage.removeItem('isNewUser');
       } finally {
         setIsLoading(false);
       }
@@ -60,38 +65,24 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const login = async (email: string, password: string) => {
     try {
       setIsLoading(true);
-      
-      // For existing users logging in, they are not new users
       setIsNewUser(false);
-      
-      // For demo purposes, allow login with any credentials
-      const mockResponse = {
-        success: true,
-        data: {
-          token: 'demo_jwt_token_' + Date.now(),
-          user: {
-            id: '550e8400-e29b-41d4-a716-446655440000',
-            name: 'John Doe',
-            email: email,
-            isNewUser: false
-          }
-        }
+
+      // Demo login (replace with real API call if desired)
+      const token = 'demo_jwt_token_' + Date.now();
+      const userData: User = {
+        id: '550e8400-e29b-41d4-a716-446655440000',
+        name: 'John Doe',
+        email,
+        isNewUser: false,
+        avatar:
+          'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=2',
       };
 
-      if (mockResponse.success) {
-        const userData = {
-          ...mockResponse.data.user,
-          avatar: 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=2'
-        };
-        
-        // Store auth data
-        localStorage.setItem('auth_token', mockResponse.data.token);
-        localStorage.setItem('user', JSON.stringify(userData));
-        
-        setUser(userData);
-      }
-      
-      return mockResponse;
+      localStorage.setItem('auth_token', token);
+      localStorage.setItem('user', JSON.stringify(userData));
+      localStorage.removeItem('isNewUser');
+
+      setUser(userData);
     } catch (error) {
       console.error('Login error:', error);
       throw new Error('Login failed. Please try again.');
@@ -103,38 +94,24 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const register = async (name: string, email: string, password: string) => {
     try {
       setIsLoading(true);
-      
-      // Mark as new user in local storage
-      localStorage.setItem('isNewUser', 'true');
-      
-      // For demo purposes, simulate registration
-      const mockResponse = {
-        success: true,
-        data: {
-          token: 'demo_jwt_token_' + Date.now(),
-          user: {
-            id: 'new_user_' + Date.now(),
-            name,
-            email,
-            isNewUser: true
-          }
-        }
+
+      // Demo register (replace with real API call if desired)
+      const token = 'demo_jwt_token_' + Date.now();
+      const userData: User = {
+        id: 'new_user_' + Date.now(),
+        name,
+        email,
+        isNewUser: true,
+        avatar:
+          'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=2',
       };
-      
-      if (mockResponse.success) {
-        const userData = {
-          ...mockResponse.data.user,
-          avatar: 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=2'
-        };
-        
-        localStorage.setItem('auth_token', mockResponse.data.token);
-        localStorage.setItem('user', JSON.stringify(userData));
-        
-        setUser(userData);
-        setIsNewUser(true);
-      }
-      
-      return mockResponse;
+
+      localStorage.setItem('auth_token', token);
+      localStorage.setItem('user', JSON.stringify(userData));
+      localStorage.setItem('isNewUser', 'true');
+
+      setUser(userData);
+      setIsNewUser(true);
     } catch (error) {
       console.error('Registration error:', error);
       throw error;
@@ -173,7 +150,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   };
 
-  const contextValue = {
+  const contextValue: AuthContextType = {
     user,
     isNewUser,
     isAuthenticated: !!user,
@@ -181,7 +158,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     register,
     logout,
     updateUser,
-    markUserAsExisting,
+    markUserAsExisting,     // ✅ now part of the type
     isLoading,
   };
 
