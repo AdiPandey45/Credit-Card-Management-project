@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { useToast } from '../hooks/useToast';
 import EditContactModal from '../components/ui/EditContactModal';
 import BlockCardModal from '../components/ui/BlockCardModal';
+import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { 
   UserIcon, 
   EnvelopeIcon, 

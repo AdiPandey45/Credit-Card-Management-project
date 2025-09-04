@@ -355,8 +355,8 @@ export default function Settings() {
                 </p>
                 <p className="text-xs text-slate-500 dark:text-slate-400">
                   {cardData.status === 'active' 
-                    ? 'Temporarily disable your card'
-                    : 'Reactivate your card for transactions'
+                    ? 'Temporarily disable your card (requires security verification)'
+                    : 'Reactivate your card for transactions (requires security verification)'
                   }
                 </p>
               </button>
